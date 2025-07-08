@@ -17,7 +17,7 @@ RISC-V는 오픈소스 범용 하드웨어 ISA로, 일반 CPU구조에 가까운
 
 이렇게 RISC Zero는 범용 RISC-V 아키텍처 기반의 zkVM을 개발하여, 개발자가 Rust나 C++ 같은 일반적인 언어로 코드를 작성하면 이를 자동으로 STARK 기반 증명으로 변환할 수 있도록 했습니다. 특히, RISC Zero는 Rust 기반 이더리움 클라이언트(Reth)를 zkVM에 그대로 컴파일해 실행하면서도 수정 없이 EVM을 증명할 수 있는 Type 0 zkEVM인 [Zeth](https://risczero.com/blog/designing-high-performance-zkVMs)를 만들었습니다. 이를 통해 zkVM이 검증 가능한 소프트웨어 애플리케이션 구축에 적합하며, RISC-V가 이를 위한 최적의 기반이라는 인식이 확산되었습니다.
 
-![RISC Zero Zeth](./img/zkVM1.png)
+![RISC Zero Zeth](./img/zkvm1.png)
 *Source: [RISC Zero Zeth Release](https://risczero.com/blog/zeth-release)*
 
 
