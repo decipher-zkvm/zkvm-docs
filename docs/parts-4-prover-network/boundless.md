@@ -4,6 +4,9 @@
 
 * Docs: [https://docs.beboundless.xyz/developers/what](https://docs.beboundless.xyz/developers/what)
 
+* Whitepaper: [https://read.beboundless.xyz/](https://read.beboundless.xyz/)
+
+
 **Introducing the Boundless Foundation**
 
 ![](img/boundless1.png)
@@ -32,44 +35,60 @@ Boundless는 분산형 시장을 활용하여 복잡한 연산을 효율적으�
 앱 개발자가 Rust로 zkVM 프로그램을 작성하면, zkVM은 이 프로그램의 정확한 실행에 대한 ZKP를 제공합니다. 이 증명에는 출력값(journal)과 암호학적 증명(seal)을 포함됩니다. Seal은 보통 zk-STARK 또는 SNARK의 형태이며, Boundless가 여러 증명을 하나로 묶어 Aggregated Proof를 만들면 각 개별 증명이 Aggregated Proof 안에 포함되었음을 증명하는 Merkle inclusion proof를 seal로 사용합니다.
 Boundless Market을 사용하면 누구나 하드웨어 제약 없이 증명을 요청할 수 있으며, 이러한 사용자를 requestor라고 합니다. Boundless는 requestor와 prover 간의 연결을 관리합니다.
 
-앱 개발자(requestor)는 프로그램과 입력, 가격 정보를 담아 Boundless Market에 온체인 또는 오프체인으로 증명을 제출합니다.
+이렇게 Boundless에 대한 접근은 모든 주요 체인에 기본적으로 배포되는 Boundless Market Contract를 통해 시작됩니다. Boundless Market은 애플리케이션의 증명 요청을 Boundless Prover Node가 제공하는 컴퓨팅 용량과 매칭하는 허가 없는 청산 기관 역할을 합니다.
 
-- **온체인:** Market Contract에 트랜잭션을 보내 요청
-- **오프체인:** Order-stream 서버를 통해 요청
 
-증명 요청이 들어오면 Boundless는 역 더치 경매(가격이 점점 올라가는 경매)를 통해 Prover를 찾습니다. Prover는 적절한 가격, 연산량, 담보, 타임아웃 등을 고려해 참여 여부를 결정합니다. 이때 Prover는 요청을 lock-in하여 독점적으로 증명을 생성해 보상을 받거나, lock 없이 즉시 증명해 수수료를 받을 수 있습니다.
+#### How the Boundless Market Works
+![](img/boundless5.png)
+*https://x.com/boundless_xyz/status/1920862141944389695*
 
-Prover가 보상(Reward)을 받으려면 제안서(offer)가 만료되기 전에 증명을 제출해야 하며, 여러 요청을 묶어서 하나의 Aggregated Proof로 제출해 가스 비용을 절약하고 효율을 높입니다. 이때 Aggregated Proof는 Merkle Tree 구조로 만들어지며, 각 leaf는 개별 요청에 대한 증명이고, root에는 전체 증명이 유효함을 증명하는 하나의 Groth16 proof가 포함됩니다. 모든 조건이 충족되면 Prover는 보상을 받고, 요청자는 증명을 받아 애플리케이션에서 사용할 수 있습니다.
+1. **Proof 요청 생성 및 브로드캐스트**
 
-**Reverse-Dutch Auction**
+개발자는 다음 내용을 명시하여 proof 요청을 생성합니다.
 
-역 더치 경매는 가격이 점점 올라가는 경매로 증명자가 작업을 수락해 기한 내 제출하면 비용을 받고, 실패 시 담보는 현상금으로 전환되어 다른 증명자가 제출 시 이를 가져가도록 하는 구조입니다.
+- The zkVM program (URL)
+- Input - either inline or a URL
+- Requirements on proven execution output (e.g. an expected journal hash)
+- Offered price and required stake - as auction parameters (min/max price, ramp-up time, time-outs, and slashing stake)
 
-![](img/boundless4.png)
-*https://x.com/iamdamilareeh/status/1937810727919644873*
+2. **Reverse-Dutch Auction**
 
-요청 시각이 되면 역 더치 경매가 시작됩니다.
+요청에 명시된 시간이 되면 역 더치 경매가 시작되며, 가격은 minPrice에서 시작하여 ramp-up 기간 동안 선형으로 상승하고, 만료 시까지 maxPrice에 유지됩니다. Boundless prover Node들은 프로그램을 실행하여 예상 사이클을 추정하고, 현재 가격이 증명 비용을 초과하는지 판단합니다. 가격을 수락해 입찰(bid)한 첫 번째 prover 노드가 요청을 lock하며, 이로써 해당 prover는 fulfillment에 대한 독점적인 보상을 받을 권리를 획득합니다. 대가로 prover는 stake를 예치해야 하며, lock된 요청을 prover가 제출하지 못한 경우 stake는 bounty가 되어 다른 prover가 proof를 제출 시 가져갈 수 있습니다. prover는 언제든지 lock되지 않은 작업을 입찰 없이 즉시 수행하여 현재 경매 가격을 받을 수 있으며, 이 경우 stake는 필요하지 않습니다.
 
-* 시작 시점에는 minPrice으로 시작
-* ramp-up 기간 동안 선형으로 가격이 상승하여 maxPrice에 도달
-* 이후 maxPrice가 만료 시까지 유지됨
+3. **Proof 생성 및 배칭**
+prover는 여러 요청을 배치(batch)하여 처리할 수 있습니다. 각 실행 receipt는 Merkle tree의 leaf가 되며, 단일 Groth16 proof가 Merkle root에 대해 증명을 수행합니다. 배칭은 온체인 검증 가스를 여러 요청에 걸쳐 분산시켜 효율을 높입니다.
 
-Prover의 행동
+4. **결제(Settlement)**
+Boundless market contract는 Groth16 proof를 한 번 검증한 후, 각 Merkle inclusion proof를 대응하는 요청과 대조해 확인합니다. 락된 자금(또는 요청자의 예치금)에서 prover에게 비용 지급 및 스테이크 반환합니다. Proof가 제출되면 이벤트가 emit되고 proof는 calldata로 제공되며, 요청자는 자신의 컨트랙트로 콜백을 받을 수도 있습니다.
 
-* Boundless prover 노드들은 프로그램을 실행해 필요한 사이클 수(연산량)를 추정
-* 현재 가격이 증명 생성 비용보다 높은지 판단하여 참여 여부를 결정
-* Prover가 입찰을 제출하면 경매는 종료되며, 해당 prover가 요청을 “lock-in”:
-    * 요청이 lock되면 해당 prover만이 증명을 제출하고 보상을 받을 수 있음
-        * 다른 prover가 해당 요청을 가로채지 못하기 때문에 자원의 낭비 없이 안전하게 연산을 수행할 수 있음
-    * 요청을 lock하려면 prover는 담보(stake)를 예치해야 하며, 기한 내에 증명을 제출하지 못하면 이 담보는 슬래시(slash)됨
 
-입찰 없이 바로 처리도 가능
+#### The Boundless Incentive Mechanism: Proof of Verifiable Work
 
-* 요청이 아직 lock되지 않았다면, Prover는 입찰 없이 바로 작업을 수행하고 증명을 생성하여 제출 가능
-* 이 경우 stake(담보) 없이도 가능한 상태로, 제출 시점의 경매 가격에 따라 보상을 받음
+기존 프로토콜은 PoW(해시 연산량) 또는 PoS(스테이킹)을 통해 보상을 제공합니다.
 
-실패 시 처리
+PoVW는 각 ZKP의 복잡도를 온체인에서 측정하여 prover들이 수행한 정확한 작업량에 따라 보상하는 최초의 메커니즘입니다.
 
-* 만약 lock한 prover가 기한 내 증명을 제출하지 못하면:
-    * 담보(stake)가 현상금(bounty)으로 전환됨
-    * 다른 prover가 가장 먼저 증명을 제출하면 이 현상금을 받게 됨
+![](img/boundless6.png)
+*https://x.com/boundless_xyz/status/1920862141944389695*
+
+**작동 방식**
+
+1. Immutable Cycle Tag
+- 모든 Boundless proof는 수행된 사이클 수와 재사용 방지를 위한 고유 nonce가 포함된 immutable tag를 내장합니다. 이 tag는 proof의 공개 claim의 일부로 포함되어 있어 prover와 요청자 모두 이를 변조할 수 없습니다.
+2. Epoch Tally
+- 각 **epoch** 종료 시, PoVW 컨트랙트는 해당 기간 동안 제출되어 최종 확정된 proof들의 cycle tag를 모두 합산합니다.
+3. Deterministic Payout
+- 각 epoch마다 고정된 양의 $ZKC(Boundless’ native token)가 발행(mint)되며, 전체 cycle 비율에 비례하여 분배됩니다.
+    - 예: 한 prover가 전체 cycle의 2%를 처리했다면, 발행된 $ZKC의 2%를 보상으로 받게 됩니다.
+
+
+**Why PoVW Matters**
+
+- **Accuracy over guesswork:** 보상이 암호학적으로 검증된 작업량과 비례하여 지급되며, 10-cycle proof와 1천만-cycle proof가 동일하게 취급되는 문제가 사라집니다.
+- **Permissionless meritocracy**: latency 및 스테이킹 요건을 충족하는 노드는 자신이 증명한 만큼의 정확한 보상을 획득할 수 있습니다.
+- **Transparent economics**: 미터(계량기)가 온체인에서 조작 불가능하게 작동하기 때문에, 누구나 마지막 cycle까지 보상을 감사(audit) 가능합니다.
+
+
+![](img/boundless7.png)
+*https://x.com/reka_eth/status/1915076064008900788*
+
