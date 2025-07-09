@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Real-Time Proving
 
 Real-time proving은 이더리움 블록 하나를 12초 내에 증명하는 것을 의미합니다.
