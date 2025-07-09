@@ -18,33 +18,32 @@ SP1은 프로그램 실행 정보를 기능별로 나누어 각각의 Table로 �
 
 RISC-V 프로그램을 추상화한 Execution Representation을 `ExecutionRecord`라고 부릅니다. 여기서 증명되어야 할 것들이 Events로 기록되어 있습니다 (예: CpuEvent, AluEvent 등). `ExecutionRecord`를 통해 Trace(= Table)를 생성합니다. 아래처럼 각 명령어 타입에는 대응되는 Chip(e.g., AddSubChip)이 있습니다. Chip은 Table이 따라야 할 제약조건(AIR Constraint)라고 생각하면 됩니다.
 
-<p align="center"><img src="img/sp1_trace.png" alt="" /><br /><em>SP1 ExecutionRecord와 Chip 구조 (출처:</em> <a href="https://medium.com/@gavin.ygy/mastering-sp1-zkvm-design-part-2-air-constraints-for-core-proof-1565ff5aed8f"><em>Medium</em></a><em>)</em></p>
+![SP1 Trace](./img/sp1_trace.png)
+*SP1 ExecutionRecord와 Chip 구조 (출처: [Medium](https://medium.com/@gavin.ygy/mastering-sp1-zkvm-design-part-2-air-constraints-for-core-proof-1565ff5aed8f))*
 
 SP1이 사용하는 BabyBear Field는 $2^{31}$ 크기를 가지므로 RISC-V 32비트 값을 표현하기 위해 u32를 4 bytes(32비트)로 나누어 각각의 byte를 BabyBear Field로 인코딩합니다. (이들이 실제 byte에서 왔는지 보장하기 위해 Range Check를 합니다) → 이러면 아래의 'Preprocessed Table'에서 설명하는 byte Table도 작아서 이점이 있습니다.
 
-> 💡 **예시**
->
-> CPU 클럭이 7일 때, runtime에서 ADD 명령어를 만난다고 가정 (입력값은 2와 3)
->
-> **AluEvent**에는
->
-> * a: 5 (출력)
-> * b: 2
-> * c: 3
-> * clk: 7
->
-> **CpuEvent**에는
->
-> * instruction: ADD
-> * a\_record: a에 대한 메모리 접근
-> * b\_record, c\_record도 동일
-> * pc: 현재 시점 프로그램 카운터 값
->
-> 여기서 `generate_trace()`(record → trace) 호출되면 CpuChip과 AddSubChip은 위 데이터 기반으로 각자의 Table에 row를 추가합니다. (이 row의 각 entry는 모두 BabyBear 필드의 원소)
->
-> AddSubChip은 $5 = 2 + 3$을 강제하는 Constraint가 있고, CpuChip은 클럭 7에서 레지스터 0의 값이 5임을 강제하는 메모리 접근 Constraint가 있습니다.
->
-> Cpu table ↔ Add table 간의 값 일치는 LogUp으로 보장합니다. (각 Table은 독립적이므로 이런 과정이 필요)
+:::tip
+CPU 클럭이 7일 때, runtime에서 ADD 명령어를 만난다고 가정 (입력값은 2와 3)
+
+**AluEvent**에는
+- a: 5 (출력)
+- b: 2
+- c: 3
+- clk: 7
+
+**CpuEvent**에는
+- instruction: ADD
+- a\_record: a에 대한 메모리 접근
+- b\_record, c\_record도 동일
+- pc: 현재 시점 프로그램 카운터 값
+
+여기서 `generate_trace()`(record → trace) 호출되면 CpuChip과 AddSubChip은 위 데이터 기반으로 각자의 Table에 row를 추가합니다. (이 row의 각 entry는 모두 BabyBear 필드의 원소)
+
+AddSubChip은 $5 = 2 + 3$을 강제하는 Constraint가 있고, CpuChip은 클럭 7에서 레지스터 0의 값이 5임을 강제하는 메모리 접근 Constraint가 있습니다.
+
+Cpu table ↔ Add table 간의 값 일치는 LogUp으로 보장합니다. (각 Table은 독립적이므로 이런 과정이 필요)
+:::
 
 ## The "Beams" (Multi-Table Trace)
 
@@ -54,7 +53,8 @@ SP1는 Multi-Table 구조로, 여러 개의 Table이 서로 협력해서 프로�
 
 각각 **CPU Table, ALU Tables, Memory Tables, Precompiled Tables, Other Tables**가 존재합니다.
 
-<p align="center"><img src="img/sp1_chip.png" alt="" /><br /><em>여기서 Chip은 Table로 생각해도 무방합니다. 논문에서 Table들을 설명한 걸 시각화한 자료입니다. (출처:</em> <a href="https://trapdoortech.medium.com/zero-knowledge-proof-introduction-to-sp1-zkvm-source-code-d26f88f90ce4"><em>Medium</em></a><em>)</em></p>
+![SP1 Chip](./img/sp1_chip.png)
+*여기서 Chip은 Table로 생각해도 무방합니다. 논문에서 Table들을 설명한 걸 시각화한 자료입니다. (출처: [Medium](https://trapdoortech.medium.com/zero-knowledge-proof-introduction-to-sp1-zkvm-source-code-d26f88f90ce4))*
 
 ### Preprocessed Table
 
@@ -85,11 +85,12 @@ Execution Trace가 너무 크면, 메모리 문제 등등이 생길 수 있습�
 
 (예시: Tendermint light client verification은 3천만 cycles. 논문에서는 Shard size를 $2^{22}$로 사용한다고 명시되어 있습니다.)
 
-<p align="center"><img src="img/sp1_sharding.png" alt="" /><br /><a href="https://drive.google.com/file/d/1aTCELr2b2Kc1NS-wZ0YYLKdw1Y2HcLTr/view"><em>SP1 Technical Whitepaper</em></a></p>
+![SP1 Sharding](./img/sp1_sharding.png)
+*[SP1 Technical Whitepaper](https://drive.google.com/file/d/1aTCELr2b2Kc1NS-wZ0YYLKdw1Y2HcLTr/view)*
 
 Shard Proof 두 개를 하나의 상위 증명으로 생성하거나, 마지막에 Groth16 같은 SNARK로 wrapping하는 단계는 Recursion이라고 부르며, SP1은 이 recursion을 위해 전용 custom ISA zkVM(SP1과는 다름)을 사용합니다.
 
-> 💡 **참고**
->
-> 1. trace ↔ table 같은 의미로 사용
-> 2. bus ↔ accumulator ↔ running sum 같은 의미로 사용
+:::info
+1. trace ↔ table 같은 의미로 사용
+2. bus ↔ accumulator ↔ running sum 같은 의미로 사용
+:::

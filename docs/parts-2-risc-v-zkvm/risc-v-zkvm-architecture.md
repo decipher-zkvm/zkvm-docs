@@ -211,6 +211,7 @@ DEEP 기법이 없다면, 증명자는 모든 원래 trace 다항식들 $(d_1, d
 저차수 다항식인지 증명하기위해 FRI(Fast Reed-Solomon Interactive Oracle Proof of Proximity)를 사용합니다.
 
 ![FRI Protocol](./img/fri.png)
+*출처: [Medium](https://medium.com/truezk/fri-commitment-scheme-afca71739fab)*
 
 #### Mixing for FRI
 7개의 DEEP 다항식 $(d'_1,d'_2,d'_3,c'_1,c'_2,c'_3,V')$을 모두 개별적으로 검증하는 것은 비효율적입니다. $C_{mix}(x)$을 구성할때처럼 여러개의 다항식을 검증자가 제공하는 랜덤값 $\alpha_2$을 사용하여 하나의 다항식으로 혼합합니다:
