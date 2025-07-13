@@ -21,7 +21,7 @@ const sidebars: SidebarsConfig = {
     'intro',
     {
       type: 'category',
-      label: 'PARTS 1: History',
+      label: 'PART 1: Blockchain & ZK',
       items: [
         'parts-1-history/Introduction',
         'parts-1-history/Ethereum-Execution-Model',
@@ -32,7 +32,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'PARTS 2: RISC-V zkVM',
+      label: 'PART 2: RISC-V zkVM',
       items: [
         'parts-2-risc-v-zkvm/risc-v-zkvm-architecture',
         'parts-2-risc-v-zkvm/optimization',
@@ -42,7 +42,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'PARTS 3: Real-Time Proving',
+      label: 'PART 3: Real-Time Proving',
       items: [
         {
           type: 'category',
@@ -63,7 +63,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'PARTS 4: Prover Network',
+      label: 'PART 4: Prover Network',
       items: [
         'parts-4-prover-network/succinct-network',
         'parts-4-prover-network/boundless',
@@ -71,7 +71,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'PARTS 5: Use Cases',
+      label: 'PART 5: Use Cases',
       items: [
         'parts-5-use-cases/historical-and-multichain-storage-proofs',
         'parts-5-use-cases/ibc-eureka',
