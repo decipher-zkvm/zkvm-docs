@@ -83,7 +83,11 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Miscellaneous',
-      items: ['miscellaneous/FRI', 'miscellaneous/sp1-one-pager'],
+      items: [
+        'miscellaneous/TinyRAM',
+        'miscellaneous/FRI', 
+        'miscellaneous/sp1-one-pager'
+      ],
     },
   ],
 };
