@@ -1,4 +1,4 @@
-## Boundless
+# Boundless
 
 * X: [https://x.com/boundless_xyz/status/1939671665732198778](https://x.com/boundless_xyz/status/1939671665732198778)
 
