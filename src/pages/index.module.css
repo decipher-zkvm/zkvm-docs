@@ -1,23 +1,387 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
+.main {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  overflow: hidden;
+}
 
-.heroBanner {
-  padding: 4rem 0;
+/* Space Background */
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+/* Stars */
+.heroBackground::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+    radial-gradient(2px 2px at 40px 70px, #ffffff, transparent),
+    radial-gradient(1px 1px at 50px 160px, #ffffff, transparent),
+    radial-gradient(1px 1px at 130px 40px, #ffffff, transparent),
+    radial-gradient(2px 2px at 80px 10px, #ffffff, transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.3;
+  animation: starMove 200s linear infinite;
+}
+
+/* Nebula effect */
+.heroBackground::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at top left, rgba(37, 194, 160, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at bottom right, rgba(46, 133, 85, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at center, rgba(37, 194, 160, 0.05) 0%, transparent 50%);
+  filter: blur(40px);
+  opacity: 0.6;
+}
+
+@keyframes starMove {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-200px);
+  }
+}
+
+/* Flying Superman */
+.superman1,
+.superman2,
+.superman3,
+.superman4,
+.superman5 {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  opacity: 0.5;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.superman1 {
+  top: 20%;
+  left: -10%;
+  animation: flySuperman1 8s linear infinite;
+  animation-delay: 0s;
+}
+
+.superman2 {
+  bottom: 30%;
+  left: -10%;
+  animation: flySuperman2 8s linear infinite;
+  animation-delay: 3s;
+}
+
+.superman3 {
+  top: 60%;
+  left: -10%;
+  animation: flySuperman3 8s linear infinite;
+  animation-delay: 6s;
+}
+
+.superman4 {
+  bottom: -10%;
+  left: 20%;
+  animation: flySuperman4 8s linear infinite;
+  animation-delay: 2s;
+}
+
+.superman5 {
+  bottom: -10%;
+  right: 30%;
+  animation: flySuperman5 8s linear infinite;
+  animation-delay: 5s;
+}
+
+@keyframes flySuperman1 {
+  0% {
+    transform: translate(0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(120vw, -60vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flySuperman2 {
+  0% {
+    transform: translate(0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(120vw, -60vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flySuperman3 {
+  0% {
+    transform: translate(0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(120vw, -60vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flySuperman4 {
+  0% {
+    transform: translate(0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(120vw, -60vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flySuperman5 {
+  0% {
+    transform: translate(0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(120vw, -60vh) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* Pulse effect - simplified */
+.pulseCircle {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(37, 194, 160, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
+}
+
+/* Content */
+.container {
+  position: relative;
+  z-index: 10;
   text-align: center;
+  padding: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.title {
+  font-size: 5rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -2px;
+}
+
+.zkText {
+  background: linear-gradient(135deg, #25c2a0 0%, #2e8555 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroText {
+  color: #ffffff;
+  display: inline-block;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+.tagline {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+/* Cards */
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2.5rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #25c2a0, transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+              0 0 40px rgba(37, 194, 160, 0.15);
+}
+
+.card:hover::before {
+  transform: translateX(100%);
+}
+
+.cardIcon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.card h3 {
+  font-size: 1.8rem;
+  color: #25c2a0;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.cardDescription {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.cardButton {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background: linear-gradient(135deg, #25c2a0 0%, #2e8555 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
+.cardButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(37, 194, 160, 0.3);
+  color: white;
+  text-decoration: none;
+}
+
+/* Footer */
+.footer {
+  margin-top: 2rem;
+}
+
+.footerDivider {
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #25c2a0, transparent);
+  margin: 0 auto 2rem;
+}
+
+.footer p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.footer strong {
+  color: #25c2a0;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+  
+  .tagline {
+    font-size: 1.1rem;
+  }
+  
+  .cardsContainer {
+    grid-template-columns: 1fr;
+  }
+  
+  .orbitCircle {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .orbitCircle::before {
+    animation: orbit 25s linear infinite;
   }
 }
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
