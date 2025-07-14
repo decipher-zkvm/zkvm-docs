@@ -38,7 +38,7 @@ export default function Home() {
               </p>
               <Link
                 className={styles.cardButton}
-                to="/docs/intro">
+                to="/docs/parts-1-history/Introduction">
                 Start Learning →
               </Link>
             </div>
@@ -59,7 +59,7 @@ export default function Home() {
           
           <footer className={styles.footer}>
             <div className={styles.footerDivider}></div>
-            <p>Made with 💚 by <strong>Decipher</strong></p>
+            <p>Made with 💙 by <strong>Decipher</strong></p>
           </footer>
         </div>
       </main>

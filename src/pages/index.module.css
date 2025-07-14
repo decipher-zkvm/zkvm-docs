@@ -59,9 +59,9 @@
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(ellipse at top left, rgba(37, 194, 160, 0.1) 0%, transparent 40%),
-    radial-gradient(ellipse at bottom right, rgba(46, 133, 85, 0.1) 0%, transparent 40%),
-    radial-gradient(ellipse at center, rgba(37, 194, 160, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse at top left, rgba(0, 102, 204, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at bottom right, rgba(220, 20, 60, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at center, rgba(0, 102, 204, 0.05) 0%, transparent 50%);
   filter: blur(40px);
   opacity: 0.6;
 }
@@ -214,7 +214,7 @@
   position: absolute;
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(37, 194, 160, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 102, 204, 0.08) 0%, transparent 70%);
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -241,7 +241,7 @@
 }
 
 .zkText {
-  background: linear-gradient(135deg, #25c2a0 0%, #2e8555 100%);
+  background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -288,7 +288,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, transparent, #25c2a0, transparent);
+  background: linear-gradient(90deg, transparent, #DC143C, transparent);
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -297,7 +297,7 @@
   transform: translateY(-5px);
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
-              0 0 40px rgba(37, 194, 160, 0.15);
+              0 0 40px rgba(0, 102, 204, 0.15);
 }
 
 .card:hover::before {
@@ -312,7 +312,7 @@
 
 .card h3 {
   font-size: 1.8rem;
-  color: #25c2a0;
+  color: #DC143C;
   margin-bottom: 1rem;
   font-weight: 700;
 }
@@ -327,7 +327,7 @@
 .cardButton {
   display: inline-block;
   padding: 0.8rem 2rem;
-  background: linear-gradient(135deg, #25c2a0 0%, #2e8555 100%);
+  background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
   color: white;
   text-decoration: none;
   border-radius: 30px;
@@ -339,7 +339,7 @@
 
 .cardButton:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(37, 194, 160, 0.3);
+  box-shadow: 0 10px 30px rgba(220, 20, 60, 0.4);
   color: white;
   text-decoration: none;
 }
@@ -352,7 +352,7 @@
 .footerDivider {
   width: 100px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #25c2a0, transparent);
+  background: linear-gradient(90deg, transparent, #0066CC, transparent);
   margin: 0 auto 2rem;
 }
 
@@ -363,7 +363,7 @@
 }
 
 .footer strong {
-  color: #25c2a0;
+  color: #0066CC;
   font-weight: 700;
 }
 
