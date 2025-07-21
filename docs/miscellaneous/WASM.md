@@ -1,4 +1,4 @@
-# What is WASM(WebAssembly)?
+# WASM(WebAssembly)
 
 [WASM](https://webassembly.org/)은 stack 기반 VM을 위한 바이너리 명령어 형식입니다. 이는 프로그래밍 언어들을 위해 다양한 운영체제나 브라우저에서 별도의 수정 없이도 잘 작동하도록 설계되었으며, 웹 환경에서 클라이언트와 서버 애플리케이션을 배포할 수 있도록 해줍니다. 
 
