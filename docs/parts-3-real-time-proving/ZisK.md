@@ -1,4 +1,4 @@
-## Zisk
+# Zisk
 
 * X: [https://x.com/ziskvm/status/1935307212282593503](https://x.com/ziskvm/status/1935307212282593503)
 

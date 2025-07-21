@@ -1,6 +1,6 @@
-## zkSync
+# zkSync
 
-### Airbender 출시
+## Airbender 출시
 
 * X: [https://x.com/zksync/status/1937587716453204009](https://x.com/zksync/status/1937587716453204009)
 
@@ -14,7 +14,7 @@
 
 [Mersenne31_polynomial_arithmetic.pdf](https://github.com/ingonyama-zk/papers/blob/main/Mersenne31_polynomial_arithmetic.pdf)
 
-Proving Architecture를 간단하게 살펴보면 다음과 같습니다. 
+### Proving Architecture
 
 - **Witness Commitment:** Low-Degree Extensions(LDEs)과 trace commitments 계산
 - **Lookup & Memory Argument:** lookup table을 사용하여 메모리 연산 검증
@@ -22,7 +22,7 @@ Proving Architecture를 간단하게 살펴보면 다음과 같습니다.
 - **DEEP Polynomial Construction:** proof 크기를 줄이기 위해 FRI batching 구현
 - **FRI IOPP:** final proximity proof 생성
 
-**Benchmarks**
+### Benchmarks
 
 Airbender를 두 개의 주요 zkVM 증명 시스템인 RiscZero와 SP1(Turbo)와 비교 테스트하였으며, 공정한 비교를 위해 표준화된 피보나치(Fibonacci) 프로그램을 사용했습니다. 벤치마크는 NVIDIA L4와 H100 GPU 모두에서 수행되었으며, 두 단계의 성능을 측정했습니다.
 
