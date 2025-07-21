@@ -5,7 +5,11 @@
 ![EVM Diagram](./img/EVM.png)
 *Source: [Ethereum.org](https://ethereum.org/en/developers/docs/evm/#:~:text=Diagram%20adapted%20from,a%20new%20tab)*
 
-EVM은 이더리움 가상 머신(Ethereum Virtual Machine)으로, 이더리움에서 모든 트랜잭션을 처리하는 소프트웨어입니다. 각 노드는 이 소프트웨어(예: geth)를 실행함으로써 이더리움 네트워크에 참여하게 됩니다. 이더리움에서 트랜잭션은 EVM 바이트코드라는 형태로 표현되며, 이는 EVM이 이해하고 실행할 수 있는 명령어 집합을 나타냅니다. 즉, EVM은 smart contract의 배포 및 실행을 담당하며, Stack, Memory, Storage access 등을 포함한 다양한 바이트 코드 명령어([Opcode](https://www.evm.codes/))를 통해 연산을 수행할 수 있습니다. 이는 Solidity와 같은 언어로 작성된 코드를 쉽게 실행할 수 있도록 해주며, 이를 통해 수많은 DApp(탈중앙화 앱)이 만들어질 수 있었습니다. 
+EVM은 이더리움 가상 머신(Ethereum Virtual Machine)으로, 이더리움 네트워크에서 트랜잭션을 실행하고 스마트 컨트랙트를 처리하는 상태 기반 실행 환경입니다. 각 이더리움 노드는 EVM 명세를 구현한 클라이언트 소프트웨어(예: Geth, Nethermind, Erigon 등)를 실행함으로써 네트워크에 참여하고, 동일한 상태 전이를 보장하며 블록을 검증합니다.
+
+이더리움의 트랜잭션은 EVM 바이트코드 형태로 표현되며, 이는 EVM이 해석할 수 있는 저수준 명령어 집합([Opcode](https://www.evm.codes/))으로 구성되어 있습니다. EVM은 이 바이트코드를 실행하며, 스택 기반 연산, 메모리 접근, 영구 저장소(Storage) 조작 등을 통해 상태를 변경합니다. 이러한 구조 덕분에 스마트 컨트랙트는 Solidity와 같은 고급 언어로 작성된 뒤 바이트코드로 컴파일되어 EVM에서 실행될 수 있습니다.
+
+결과적으로 EVM은 이더리움의 모든 노드가 동일한 규칙에 따라 트랜잭션을 처리하고 상태를 동기화하도록 하며, 다양한 탈중앙화 애플리케이션(DApp)의 실행 기반이 되는 핵심 요소입니다. 바이트코드에서 사용되는 명령어 집합은 EVM Opcodes에서 확인할 수 있습니다.
 
 
 ## What is zkEVM?
@@ -13,16 +17,24 @@ EVM은 이더리움 가상 머신(Ethereum Virtual Machine)으로, 이더리움�
 ![zkEVM Overview](./img/zkEVM1.png)
 *Source: [Chainlink Education Hub](https://chain.link/education-hub/zkevm)*
 
-zkEVM은 EVM 바이트코드 기반의 스마트 컨트랙트 실행 결과에 대한 receipt를 생성하여 실행이 올바르게 계산되었음을 증명할 수 있는 시스템입니다. 여기서 어떤 계산이 올바르게 수행되었음을 수학적으로 증명할 수 있는 기술인 영지식 증명(ZKP)을 사용합니다. 이러한 zkEVM을 통해 오프체인에서 발생한 여러 트랜잭션을 하나의 receipt로 요약하고 이를 온체인에 제출함으로써, 확장성과 효율성을 높이는 방식의 롤업 구현을 가능하게 합니다. 
+zkEVM은 이더리움 가상 머신(EVM) 바이트코드 기반의 스마트 컨트랙트 실행 결과에 대한 유효성 증명(validity proof)을 생성하여, 해당 오프체인 계산이 올바르게 수행되었음을 온체인에서 검증할 수 있도록 하는 시스템입니다. 여기서 핵심은 어떤 계산이 올바르게 수행되었음을 수학적으로 증명할 수 있는 기술인 영지식 증명(ZKP: Zero-Knowledge Proof)을 사용하는 것입니다. 
 
-zkEVM은 validity proof 기반의 ZK-rollup으로, L1 (Ethereum)에서 증명을 검증받기 때문에 보안은 유지하면서도 자체 실행 환경에서 속도와 처리량을 자유롭게 최적화할 수 있습니다. 이렇게 트랜잭션 입력 데이터(calldata)는 압축된 형태로 L1에 올리되, 상태 루트와 증명만 확인되면 되므로 optimistic rollup이 모든 서명 · 데이터를 그대로 게시할 때보다 가스 비용이 크게 낮아집니다. 증명이 검증되는 즉시(통상 몇 분 이내) 최종성이 확보돼 1–2 주 챌린지 기간이 필요한 optimistic rollup보다 자산 이동이 훨씬 빠르며, 이는 DeFi 유동성 순환을 가속화합니다. 마지막으로 EVM 호환성 덕분에 Solidity 코드, 개발 툴체인, 기존 인프라와 유동성을 그대로 활용할 수 있어 강력한 네트워크 효과를 누린다는 점도 큰 장점입니다.
+zkEVM을 사용하는 ZK-Rollup은 이더리움 L1의 보안 모델을 상속합니다. 이는 ZK-Rollup에서 발생한 모든 상태 전이(State Transition)가 암호학적으로 생성된 유효성 증명(Validity Proof)을 통해 검증되기 때문입니다. 해당 증명은 L1 스마트 컨트랙트 상에서 검증되며, 이를 통해 L2에서 수행된 모든 트랜잭션이 정확히 처리되었음을 L1 수준에서 수학적으로 보장합니다. 즉, L1 합의에 의존하지 않고도 L2 연산 결과의 정당성이 확정되므로, L2 사용자도 이더리움 메인넷만큼 높은 보안 수준을 누릴 수 있습니다.
+
+ZK-Rollup은 연산은 오프체인(L2)에서 실행하고, 결과만을 요약한 증명과 최소한의 데이터만 온체인(L1)에 제출합니다. 이처럼 L2는 L1과 연산 관점에서 독립적인 구조를 설계할 수 있으며, 다음과 같은 측면에서 성능 최적화가 가능합니다.
+
+* 병렬 처리 아키텍처 설계: L1의 싱글 스레드 EVM 구조에 얽매이지 않고 병렬 VM 처리 가능
+
+* ZK 친화적 데이터 구조 채택: 예를 들어, Merkle Tree 대신 Poseidon-based Commitment 사용
+
+* Opcode 최적화 또는 커스텀 명령어 도입: zk 프로빙에 불리한 EVM 구조 일부를 단순화하거나 제거 가능 (단, 이는 완전한 EVM 호환성 유지 시 제한됨)
 
 
 ## Representative projects
 
 ![zkEVM Projects](./img/zkEVM3.png)
 
-[Polygon, zkSync, Scroll](https://x.com/jadler0/status/1549764211542315008), Taiko등 다양한 프로젝트들은 최초의 zkEVM을 만들고자 하였고, 서로를 견제하는 시장이 만들어지기도 했습니다. 이 프로젝트들의 공통된 목표는 ZK-SNARK 기술을 사용하여 이더리움과 유사한 거래의 암호화된 실행 증명을 만드는 것입니다. 이를 통해 이더리움 체인 자체의 검증을 훨씬 쉽게 하거나, 기존 이더리움과 거의 동일한 환경에서도 훨씬 더 확장성이 뛰어난 ZK rollup을 구축 할 수 있습니다.
+[Polygon, zkSync, Scroll](https://x.com/jadler0/status/1549764211542315008), Taiko등 다양한 프로젝트들은 최초의 zkEVM을 만들고자 하였고, 서로를 견제하는 시장이 만들어지기도 했습니다. 이 프로젝트들의 공통된 목표는 ZK-SNARK 기술을 사용하여 이더리움과 유사한 거래의 암호화된 실행 증명을 만드는 것입니다. 이를 통해 이더리움 체인 자체의 검증을 훨씬 쉽게 하거나, 기존 이더리움과 거의 동일한 환경에서도 훨씬 더 확장성이 뛰어난 ZK rollup을 구축 할 수 있습니다.
 
 
 ![zkEVM Landscape](./img/zkEVM4.png)
