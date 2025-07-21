@@ -13,6 +13,35 @@ The proof system, typically in the form of a (Polynomial) Interactive Oracle Pro
 :::
 
 :::caution
-- 일부 zkVM 프로젝트(예: ZisK)는 상세 정보 부족으로 포함되지 않았습니다.
 - 정보 수정이나 추가 제안은 GitHub 이슈로 제보해 주세요.
 :::
+
+
+## RISC-V zkVM
+### Univariate PCS based Projects
+
+### FRI based
+- [Risc Zero](https://github.com/risc0/risc0)
+- [ZisK](https://github.com/0xPolygonHermez/zisk)
+- [openVM](https://github.com/openvm-org/openvm)
+- [powdrVM](https://github.com/powdr-labs/powdr)
+- [Airbender](https://github.com/matter-labs/zksync-airbender)
+
+### Stwo based
+- [Nexus 3.0](https://github.com/nexus-xyz/nexus-zkvm)
+
+### Multilinear PCS based Projects
+- [Spartan](https://github.com/microsoft/Spartan)
+- [Jolt](https://github.com/a16z/jolt)
+- [Ceno](https://github.com/scroll-tech/ceno)
+- [SP1 HyperCube](https://github.com/succinctlabs/sp1)
+
+## non RISC-V zkVM
+### Wasm
+- [zkWasm](https://github.com/DelphinusLab/zkWasm)
+### MIPS
+- [Ziren](https://github.com/ProjectZKM/Ziren)
+- [o1VM](https://github.com/o1-labs/proof-systems/tree/master/o1vm)
+### Custom ISA
+- [Cairo VM](https://github.com/lambdaclass/cairo-vm)
+- [Valida VM](https://github.com/lita-xyz/valida-vm)
