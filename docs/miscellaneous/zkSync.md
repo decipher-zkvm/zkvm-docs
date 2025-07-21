@@ -1,4 +1,4 @@
-# zkSync
+# ZKsync
 
 ## Airbender 출시
 

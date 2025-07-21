@@ -51,11 +51,9 @@ const sidebars: SidebarsConfig = {
             id: 'parts-3-real-time-proving/realtime-proving',
           },
           items: [
-            'parts-3-real-time-proving/Risc-zero',
-            'parts-3-real-time-proving/Snarkify',
             'parts-3-real-time-proving/sp1',
-            'parts-3-real-time-proving/ZisK',
-            'parts-3-real-time-proving/zkSync',
+            'parts-3-real-time-proving/Risc-zero',
+            'parts-3-real-time-proving/Snarkify'
           ],
         },
       ],
@@ -87,7 +85,9 @@ const sidebars: SidebarsConfig = {
         'miscellaneous/EOF',
         'miscellaneous/WASM',
         'miscellaneous/FRI', 
-        'miscellaneous/sp1-one-pager'
+        'miscellaneous/sp1-one-pager',
+        'miscellaneous/ZisK',
+        'miscellaneous/zkSync'
       ],
     },
   ],
