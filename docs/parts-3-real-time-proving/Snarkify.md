@@ -1,10 +1,10 @@
-## Snarkify: SRT 엔진 출시 예정
+# Snarkify
 
 * X: [https://x.com/Snarkify_ZKP/status/1923389986801430595](https://x.com/Snarkify_ZKP/status/1923389986801430595)
 
 * blog: [https://blog.snarkify.io/introducing-srt/](https://blog.snarkify.io/introducing-srt/)
 
-**SRT: Snarkify’s modular real-time proving engine for zkVMs**
+## SRT: Snarkify’s modular real-time proving engine for zkVMs
 
 [SRT(Snarkify Real-Time)](https://x.com/Snarkify_ZKP/status/1923389986801430595)는 zkVM 가속화를 위해 설계된 모듈형 real-time proving 엔진입니다. 이는 2025년 6월에 출시되며, 모든 이더리움 블록을 12s slot time 내에 증명합니다.
 
