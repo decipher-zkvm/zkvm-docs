@@ -84,6 +84,8 @@ const sidebars: SidebarsConfig = {
       label: 'Miscellaneous',
       items: [
         'miscellaneous/TinyRAM',
+        'miscellaneous/EOF',
+        'miscellaneous/WASM',
         'miscellaneous/FRI', 
         'miscellaneous/sp1-one-pager'
       ],
