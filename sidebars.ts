@@ -72,7 +72,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'parts-5-use-cases/historical-and-multichain-storage-proofs',
         'parts-5-use-cases/ibc-eureka',
-        'parts-5-use-cases/lido',
+        'parts-5-use-cases/zkOracle',
         'parts-5-use-cases/multichain-governance-aggregator',
         'parts-5-use-cases/one-more',
       ],
