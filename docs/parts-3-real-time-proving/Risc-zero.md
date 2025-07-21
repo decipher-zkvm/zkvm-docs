@@ -1,4 +1,4 @@
-# Risc zero
+# RISC Zero
 
 * X: [https://x.com/RiscZero/status/1924536174707691710](https://x.com/RiscZero/status/1924536174707691710)
 
