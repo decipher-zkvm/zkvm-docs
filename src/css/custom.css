@@ -33,3 +33,17 @@
 .katex-display {
   text-align: center;
 }
+
+/* Footer 중앙 정렬 */
+.footer .footer__links {
+  justify-content: center;
+  text-align: center;
+}
+
+.footer .footer__col {
+  text-align: center;
+}
+
+.footer .footer__copyright {
+  text-align: center;
+}

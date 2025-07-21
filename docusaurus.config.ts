@@ -7,7 +7,7 @@ import rehypeKatex from 'rehype-katex';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Decipher zkVM Research',
+  title: 'zkVM: Zero to Hero',
   tagline: 'zkVM Research',
   favicon: 'img/favicon.ico',
 
@@ -74,7 +74,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'Decipher zkVM Research',
+      title: 'zkVM: Zero to Hero',
       logo: {
         alt: 'My Site Logo',
         src: 'img/decipher.jpg',
@@ -85,6 +85,11 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Docs',
+        },
+        {
+          href: 'https://github.com/decipher-zkvm/multichain-governance-aggregator',
+          label: 'DemoApp',
+          position: 'left',
         },
         {
           type: 'localeDropdown',
@@ -119,7 +124,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Decipher Global. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Decipher Global.`,
     },
     prism: {
       theme: prismThemes.github,
