@@ -115,6 +115,15 @@ const config: Config = {
           ],
         },
         {
+          title: 'Contributors',
+          items: [
+            {
+              label: 'Our Contributors',
+              to: '/contributors',
+            },
+          ],
+        },
+        {
           title: 'More',
           items: [
             {
