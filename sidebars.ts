@@ -74,7 +74,6 @@ const sidebars: SidebarsConfig = {
         'parts-5-use-cases/ibc-eureka',
         'parts-5-use-cases/zkOracle',
         'parts-5-use-cases/multichain-governance-aggregator',
-        'parts-5-use-cases/one-more',
       ],
     },
     {
