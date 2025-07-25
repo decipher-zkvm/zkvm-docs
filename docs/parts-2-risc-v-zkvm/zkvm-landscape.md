@@ -18,19 +18,15 @@ The proof system, typically in the form of a (Polynomial) Interactive Oracle Pro
 
 
 ## RISC-V zkVM
-### Univariate PCS based Projects
-
-### FRI based
+### STARK based Projects
 - [Risc Zero](https://github.com/risc0/risc0)
 - [ZisK](https://github.com/0xPolygonHermez/zisk)
 - [openVM](https://github.com/openvm-org/openvm)
 - [powdrVM](https://github.com/powdr-labs/powdr)
 - [Airbender](https://github.com/matter-labs/zksync-airbender)
-
-### Stwo based
 - [Nexus 3.0](https://github.com/nexus-xyz/nexus-zkvm)
 
-### Multilinear PCS based Projects
+### Sumcheck based Projects
 - [Spartan](https://github.com/microsoft/Spartan)
 - [Jolt](https://github.com/a16z/jolt)
 - [Ceno](https://github.com/scroll-tech/ceno)
