@@ -83,6 +83,7 @@ const sidebars: SidebarsConfig = {
         'miscellaneous/TinyRAM',
         'miscellaneous/EOF',
         'miscellaneous/WASM',
+        'miscellaneous/PCS',
         'miscellaneous/FRI', 
         'miscellaneous/sp1-one-pager',
         'miscellaneous/ZisK',
