@@ -104,7 +104,7 @@ Group은 다음의 조건을 만족함:
 
 - Secret parameter: $\tau {\leftarrow} \mathbb F_p$
 
-- Global parameter: $gp = \{g_1^{\tau^0}, g_1^{\tau^1}, \dots, g_1^{\tau^{d}}, g_2, g_2^{\tau} \}$
+- Global parameter: $gp = {g_1^{\tau^0}, g_1^{\tau^1}, \dots, g_1^{\tau^{d}}, g_2, g_2^{\tau} }$
 
 - Delete $\tau$
 
