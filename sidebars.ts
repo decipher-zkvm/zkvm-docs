@@ -21,6 +21,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'PART 1: Blockchain & ZK',
+      collapsed: false,
       items: [
         'parts-1-history/Introduction',
         'parts-1-history/Ethereum-Execution-Model',
@@ -32,6 +33,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'PART 2: RISC-V zkVM',
+      collapsed: false,
       items: [
         'parts-2-risc-v-zkvm/risc-v-zkvm-architecture',
         'parts-2-risc-v-zkvm/optimization',
@@ -70,7 +72,6 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'PART 5: Use Cases',
       items: [
-        'parts-5-use-cases/historical-and-multichain-storage-proofs',
         'parts-5-use-cases/ibc-eureka',
         'parts-5-use-cases/zkOracle',
         'parts-5-use-cases/multichain-governance-aggregator',
