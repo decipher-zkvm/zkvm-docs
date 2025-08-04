@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     {
       type: 'category',
-      label: 'PART 1: Blockchain & ZK',
+      label: 'PART 1: The Evolution Towards RISC-V zkVM',
       collapsed: false,
       items: [
         'parts-1-history/Introduction',
