@@ -5,7 +5,7 @@
 ![EVM Diagram](./img/EVM.png)
 *Source: [Ethereum.org](https://ethereum.org/en/developers/docs/evm/#:~:text=Diagram%20adapted%20from,a%20new%20tab)*
 
-EVM은 이더리움 가상 머신(Ethereum Virtual Machine)으로, 이더리움 네트워크에서 트랜잭션을 실행하고 스마트 컨트랙트를 처리하는 상태 기반 실행 환경입니다. 각 이더리움 노드는 EVM 명세를 구현한 클라이언트 소프트웨어(예: Geth, Nethermind, Erigon 등)를 실행함으로써 네트워크에 참여하고, 동일한 상태 전이를 보장하며 블록을 검증합니다.
+EVM(Ethereum Virtual Machine)은 이더리움 가상 머신으로, 이더리움 네트워크에서 트랜잭션을 실행하고 스마트 컨트랙트를 처리하는 상태 기반 실행 환경입니다. 각 이더리움 노드는 EVM 명세를 구현한 클라이언트 소프트웨어(예: Geth, Nethermind, Erigon 등)를 실행함으로써 네트워크에 참여하고, 동일한 상태 전이를 보장하며 블록을 검증합니다.
 
 이더리움의 트랜잭션은 EVM 바이트코드 형태로 표현되며, 이는 EVM이 해석할 수 있는 저수준 명령어 집합([Opcode](https://www.evm.codes/))으로 구성되어 있습니다. EVM은 이 바이트코드를 실행하며, 스택 기반 연산, 메모리 접근, 영구 저장소(Storage) 조작 등을 통해 상태를 변경합니다. 이러한 구조 덕분에 스마트 컨트랙트는 Solidity와 같은 고급 언어로 작성된 뒤 바이트코드로 컴파일되어 EVM에서 실행될 수 있습니다.
 
@@ -17,9 +17,9 @@ EVM은 이더리움 가상 머신(Ethereum Virtual Machine)으로, 이더리움 
 ![zkEVM Overview](./img/zkEVM1.png)
 *Source: [Chainlink Education Hub](https://chain.link/education-hub/zkevm)*
 
-zkEVM은 이더리움 가상 머신(EVM) 바이트코드 기반의 스마트 컨트랙트 실행 결과에 대한 유효성 증명(validity proof)을 생성하여, 해당 오프체인 계산이 올바르게 수행되었음을 온체인에서 검증할 수 있도록 하는 시스템입니다. 여기서 핵심은 어떤 계산이 올바르게 수행되었음을 수학적으로 증명할 수 있는 기술인 영지식 증명(ZKP: Zero-Knowledge Proof)을 사용하는 것입니다. 
+zkEVM은 이더리움 가상 머신(EVM) 바이트코드 기반의 스마트 컨트랙트 실행 결과에 대한 유효성 증명(Validity Proof)을 생성하여, 해당 오프체인 계산이 올바르게 수행되었음을 온체인에서 검증할 수 있도록 하는 시스템입니다. 여기서 핵심은 어떤 계산이 올바르게 수행되었음을 수학적으로 증명할 수 있는 기술인 영지식 증명(ZKP: Zero-Knowledge Proof)을 사용하는 것입니다. 
 
-zkEVM을 사용하는 ZK-Rollup은 이더리움 L1의 보안 모델을 상속합니다. 이는 ZK-Rollup에서 발생한 모든 상태 전이(State Transition)가 암호학적으로 생성된 유효성 증명(Validity Proof)을 통해 검증되기 때문입니다. 해당 증명은 L1 스마트 컨트랙트 상에서 검증되며, 이를 통해 L2에서 수행된 모든 트랜잭션이 정확히 처리되었음을 L1 수준에서 수학적으로 보장합니다. 즉, L1 합의에 의존하지 않고도 L2 연산 결과의 정당성이 확정되므로, L2 사용자도 이더리움 메인넷만큼 높은 보안 수준을 누릴 수 있습니다.
+zkEVM을 사용하는 ZK-Rollup은 이더리움 L1의 보안 모델을 상속합니다. 이는 ZK-Rollup에서 발생한 모든 상태 전이(State Transition)가 암호학적으로 생성된 유효성 증명을 통해 검증되기 때문입니다. 해당 증명은 L1 스마트 컨트랙트 상에서 검증되며, 이를 통해 L2에서 수행된 모든 트랜잭션이 정확히 처리되었음을 L1 수준에서 수학적으로 보장합니다. 즉, L1 합의에 의존하지 않고도 L2 연산 결과의 정당성이 확정되므로, L2 사용자도 이더리움 메인넷만큼 높은 보안 수준을 누릴 수 있습니다.
 
 ZK-Rollup은 연산은 오프체인(L2)에서 실행하고, 결과만을 요약한 증명과 최소한의 데이터만 온체인(L1)에 제출합니다. 이처럼 L2는 L1과 연산 관점에서 독립적인 구조를 설계할 수 있으며, 다음과 같은 측면에서 성능 최적화가 가능합니다.
 
@@ -27,7 +27,7 @@ ZK-Rollup은 연산은 오프체인(L2)에서 실행하고, 결과만을 요약�
 
 * ZK 친화적 데이터 구조 채택: 예를 들어, Merkle Tree 대신 Poseidon-based Commitment 사용
 
-* Opcode 최적화 또는 커스텀 명령어 도입: zk 프로빙에 불리한 EVM 구조 일부를 단순화하거나 제거 가능 (단, 이는 완전한 EVM 호환성 유지 시 제한됨)
+* Opcode 최적화 또는 커스텀 명령어 도입: ZK Proving에 불리한 EVM 구조 일부를 단순화하거나 제거 가능 (단, 이는 완전한 EVM 호환성 유지 시 제한됨)
 
 
 ## Representative projects
@@ -53,7 +53,7 @@ ZK-Rollup은 연산은 오프체인(L2)에서 실행하고, 결과만을 요약�
 
 ## Inefficiencies of zkEVM
 
-이처럼 zKEVM은 EVM과의 높은 호환성을 제공하는 대신, EVM의 모든 연산 작업(Opcode)을 ZKP로 증명할 수 있는 형태로 회로화하는 작업이 필요하며, 이로 인해 증명 회로를 복잡하게 만들어 성능 저하가 발생하게 됩니다. 일부 프로젝트는 Type 2.5와 같은 방식으로 증명 속도를 개선했지만, 여전히 EVM 고유의 비효율성과 ZK-unfriendliness 문제는 완전히 해소되지 않았습니다. 즉, EVM은 zk proving에 있어서 매우 비효율적인 ISA(Instruction Set Architecture)입니다.
+이처럼 zKEVM은 EVM과의 높은 호환성을 제공하는 대신, EVM의 모든 연산 작업(Opcode)을 ZKP로 증명할 수 있는 형태로 회로화하는 작업이 필요하며, 이로 인해 증명 회로를 복잡하게 만들어 성능 저하가 발생하게 됩니다. 일부 프로젝트는 Type 2.5와 같은 방식으로 증명 속도를 개선했지만, 여전히 EVM 고유의 비효율성과 ZK-unfriendliness 문제는 완전히 해소되지 않았습니다. 즉, EVM은 ZK Proving에 있어서 매우 비효율적인 ISA(Instruction Set Architecture)입니다.
 
 **Stack-Based Architecture**
 
@@ -65,6 +65,6 @@ EVM에는 140개가 넘는 Opcode가 존재하며, 새로운 EIP(Ethereum Improv
 
 **Proving Costs & Storage Overhead**
 
-특히, Keccak-256 등의 해시 함수의 경우 각 명령마다 별도의 회로 설계가 필요하며, Poseidon 해시와 같은 zk 친화적인 해시에 비해 회로 비용이 높기 때문에 ZKP에 적합하지 않은 구조입니다.
+특히, Keccak-256 등의 해시 함수의 경우 각 명령마다 별도의 회로 설계가 필요하며, Poseidon 해시와 같은 ZK 친화적인 해시에 비해 회로 비용이 높기 때문에 ZKP에 적합하지 않은 구조입니다.
 
 
