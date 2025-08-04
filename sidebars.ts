@@ -27,7 +27,6 @@ const sidebars: SidebarsConfig = {
         'parts-1-history/Ethereum-Execution-Model',
         'parts-1-history/Transition-to-zkVM',
         'parts-1-history/RISC-V',
-        'parts-1-history/Is-RISC-V-zkVM-the-Endgame',
       ],
     },
     {
