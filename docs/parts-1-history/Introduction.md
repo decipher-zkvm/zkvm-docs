@@ -1,4 +1,4 @@
-# zk Overview
+# ZK-based Scaling: Unlocking Blockchain's Potential
 
 ## Motivation of ZK-based Scaling
 

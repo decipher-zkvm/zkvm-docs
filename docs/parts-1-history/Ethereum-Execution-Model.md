@@ -1,4 +1,4 @@
-# zkEVM Era 
+# Ethereum's ZK Scaling Journey
 
 ## What is EVM(Ethereum Virtual Machine)?
 
