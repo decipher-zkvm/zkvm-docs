@@ -10,7 +10,7 @@ IBC Eureka는 Cosmos 생태계에서 개발된 차세대 상호운용성(interop
 
 ### IBC v1의 구조적 문제
 IBC는 기본적으로 상호 라이트 클라이언트를 운영하는 구조입니다. 예를 들어 이더리움과 연결되기 위해서는 Ethereum Light Client를 온체인에 배포하고, Ethrereum에서는 Cosmos Light Client가 필요합니다.
-그러나 Ethereum은 온체인 연산 비용이 비싸고 제한이 많아 Tendermint 기반 Light Client를 직접 실행하는 게 사실상 불가능했습니다. 이 문제를 해결하기 위한 임시적 대안으로 Multisig 기반 브릿지 등 외부 브릿지를 도입하였지만, 이는 신뢰 모델이 깨지거나 보안 문제를 초래할 가능성이 있었습니다.
+그러나 Ethereum은 온체인 연산 비용이 비싸고 제한이 많이 Tendermint 기반 Light Client를 직접 실행하는 게 사실상 불가능했습니다. 이 문제를 해결하기 위한 임시적 대안으로 Multisig 기반 브릿지 등 외부 브릿지를 도입하였지만, 이는 신뢰 모델이 깨지거나 보안 문제를 초래할 가능성이 있었습니다.
 
 ### zkVM 기반 해결책
 IBC Eureka는 SP1 zkVM 기반 오프체인 Light Client 검증을 통해 Ethereum에서도 Tendermint 기반 블록 검증이 가능하도록 합니다.
@@ -21,7 +21,6 @@ IBC Eureka는 SP1 zkVM 기반 오프체인 Light Client 검증을 통해 Ethereu
 
 **Architecture Overview**
 ![](img/ibceureka(1).png)
-*Source: [IBC Eureka Docs](https://docs.skip.build/go/eureka/eureka-tech-overview)*
 
 **개요**
 Eureka는 각 체인에 다음과 같은 구성 요소를 배치합니다:
@@ -33,7 +32,6 @@ Eureka는 각 체인에 다음과 같은 구성 요소를 배치합니다:
 
 **zkVM(SP1)의 역할**
 ![](img/ibceureka(2).png)
-*Source: [Succinct](https://blog.succinct.xyz/ibc/)*
 
 - Cosmos Hub에서 전송 시작
     - 사용자가 Cosmos Hub에서 Ethereum으로 IBC 전송을 시작합니다.
@@ -53,5 +51,5 @@ SP1은 Rust 기반 Tendermint Light Client 코드를 실행할 수 있고, 실�
 → 이 증명이 이더리움에 배포된 Light Client 스마트 컨트랙트에 제출되어 유효성 검사를 통과하면 해당 Cosmos 블록 헤더를 온체인 상태로 갱신하게 됩니다.
 
 ### 성능 및 비용 효율성
-- Ethereum에서 Cosmos 체인으로 자산을 전송하는 데 빠른 모드는 약 $5, 표준 모드는 $1 이하의 비용으로 전송이 가능합니다.
+- Ethereum에서 Cosmos 체인으로 자산을 전송하는 데 빠른 모드는 약 \$5, 표준 모드는 \$1 이하의 비용으로 전송이 가능합니다.
 - 소스 체인의 확정 시간이 길더라도, 자산은 수 초 내에 목적지 체인에 도달하게 됩니다.

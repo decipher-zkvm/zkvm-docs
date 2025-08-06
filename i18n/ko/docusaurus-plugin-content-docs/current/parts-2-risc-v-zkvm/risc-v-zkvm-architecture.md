@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # RISC-V zkVM Architecture
 
 ## Overview
@@ -29,7 +25,7 @@ RISC-V 기반 프로그램은 다음 과정을 통해 zkVM에서 실행 가능�
 
 ### Compilation Process
 
-Rust는 다양한 RISC-V 아키텍처를 공식적으로 지원합니다. 해당 툴체인(source → binary 역할)을 이용해서 일반적인 Rust 코드를 컴파일하면, RISC-V ISA 기반 ELF(Executable and Linkable Format)으로 생성됩니다. 이렇게 생성된 ELF 파일은 zkVM에서 실행할 수 있는 형태입니다.
+Rust는 다양한 RISC-V 아키텍처를 공식적으로 지원합니다. 해당 툴체인(source → binary 역할)을 이용해서 일반적인 Rust 코드를 컴파일하면, RISC-V ISA 기반 ELF(Executable and Linkable Format)가 생성됩니다. 이렇게 생성된 ELF 파일은 zkVM에서 실행할 수 있는 형태입니다.
 
 ### RISC-V ELF Binary
 
@@ -82,7 +78,7 @@ Execution trace가 완성되고 규칙이 정의된 이후, 이 trace가 해당 
 
 2. **Degree Alignment**: 추후 다항식 보간 및 인코딩을 위해 row 수를 $2^k$로 맞춰야 하므로, 필요한 만큼 무작위 row를 추가해 다항식의 차수를 일정하게 유지합니다.
 
-3. **Rule Nullification**: 무작위 데이터에는 규칙이 적용되지 않아야 하므로, 이 row들의 Control Column은 모두 0으로 설정합니다.
+3. **Rule Nullification(무효화)**: 무작위 데이터에는 규칙이 적용되지 않아야 하므로, 이 row들의 Control Column은 모두 0으로 설정합니다.
 
 ![STARK Padding](./img/stark3.png)
 
@@ -121,12 +117,12 @@ STARK에서 iNTT를 사용하려면 n차 단위근 (n-th root of unity) $\omega$
 
 예를 들어, Data Column 1의 값들 `[24, 30, 54, 84, 78(random), 15(random), 29(random), 50(random)]`로부터 이 8개 값을 모두 통과하는 유일한 7차 다항식 $d_1(x)$을 구성할 수 있습니다.
 
-### Reed-Solomon Encoding: 도메인 확장을 통한 Soundness 강화
+### Reed-Solomon Encoding: 도메인 확장을 통한 건전성(Soundness) 강화
 이렇게 보간된 Trace 다항식 ($d_1(x), d_2(x), d_3(x), c_1(x),...$)은 8개의 제한된 지점에서 정의되어 있습니다. 그러나 STARK 프로토콜에서는 이 다항식들을 더 넓은 evaluation domain에서 평가합니다. 이 과정을 Reed-Solomon encoding 또는 LDE(Low Degree Extension)이라고 부릅니다. 우리의 예시에서 8개의 지점에서 정의된 7차 이하의 다항식을 $\mathcal{D}(5^{3}) = \{5^{3k}\ | \ 0\leq k \lt 32\}$에 해당하는 32개의 지점으로 Evaluation Domain을 확장합니다.
 
-이 확장은 단순한 계산적 확장이 아니라 STARK의 건전성(soundness), 즉 부정확한 증명 거부 능력을 강화하는 핵심 메커니즘입니다:
+이 확장은 단순한 계산적 확장이 아니라 STARK의 건전성, 즉 부정확한 증명 거부 능력을 강화하는 핵심 메커니즘입니다:
 
-- 정직한 증명자는 여전히 degree $\leq$ 7인 다항식을 제출하므로, 확장된 도메인에서도 평가 결과의 일관성이 유지됩니다.
+- 정직한 증명자는 여전히 $degree \leq 7$인 다항식을 제출하므로, 확장된 도메인에서도 평가 결과의 일관성이 유지됩니다.
 
 - 악의적인 증명자가 조작된 데이터를 기반으로 다항식을 구성하면, 일반적으로 더 높은 차수를 갖게 되어 확장된 도메인에서의 무작위 샘플링 시에 발각 확률이 크게 증가합니다.
 
@@ -137,13 +133,13 @@ STARK에서 iNTT를 사용하려면 n차 단위근 (n-th root of unity) $\omega$
 
 각 column의 32개의 평가 값을 leaf로 하여 Merkle Tree를 구성하고, 그 root를 commitment로 사용합니다. 증명자는 오직 Merkle Root만을 공개하며, 필요 시 특정 leaf의 존재 여부를 Merkle Proof로 입증할 수 있습니다.
 
-여기서 한 가지 더 중요한 트릭이 사용됩니다. 데이터를 더 안전하게 숨기기 위해, 다항식의 결과값을 계산할 때 사용하는 x값들(평가 지점)을 shift합니다. 예를 들어, 원래 사용하려던 x 대신 $\beta x$(예: $\beta=5$을 사용하면 머클 트리에 저장되는 값들은 실제 trace 값과 직접적인 연관성을 제거할 수 있습니다. 즉, 원래의 데이터를 추론하기 더 어려워져 Zero-Knowledge 속성이 강화됩니다.
+여기서 한 가지 더 중요한 트릭이 사용됩니다. 데이터를 더 안전하게 숨기기 위해, 다항식의 결과값을 계산할 때 사용하는 $x$값들(평가 지점)을 shift합니다. 예를 들어, 원래 사용하려던 $x$ 대신 $\beta x$(예: $\beta=5$을 사용하면 머클 트리에 저장되는 값들은 실제 trace 값과 직접적인 연관성을 제거할 수 있습니다. 즉, 원래의 데이터를 추론하기 더 어려워져 Zero-Knowledge 속성이 강화됩니다.
 
 ### 하나의 큰 다항식으로 통합: $C_{mix}(x)$
 수많은 규칙들을 하나씩 검사하는 것은 비효율적이므로(실제 RISC Zero zkVM 규칙은 수천개), 모든 규칙을 하나의 거대한 다항식으로 통합하는 작업이 필요합니다.
 
 - **Constraint Polynomials**:<br />
-이전에 정의했던 각 규칙(예: 피보나치 규칙)을 이제 각 Data Column을 나타내는 trace 다항식 $d_1(x), d_2(x), d_3(x)$을 사용하여 다시 작성합니다. 예를 들어 피보나치 규칙은 $d_1(x) + d_2(x) - d_3(x) = 0$과 같은 Constraint 다항식 $C_k(x)$로 표현됩니다. 다음 row의 값을 참조해야 하는 규칙의 경우 $d_3(gx)$처럼 x 대신 x에 단위근 g를 곱한 것을 대입하여 표현합니다. Root of unity 도메인을 이해하셨다면 눈치채셨겠지만 여기서 g는 다음 단계를 의미합니다.
+이전에 정의했던 각 규칙(예: 피보나치 규칙)을 이제 각 Data Column을 나타내는 trace 다항식 $d_1(x), d_2(x), d_3(x)$을 사용하여 다시 작성합니다. 예를 들어 피보나치 규칙은 $d_1(x) + d_2(x) - d_3(x) = 0$과 같은 Constraint 다항식 $C_k(x)$로 표현됩니다. 다음 row의 값을 참조해야 하는 규칙의 경우 $d_3(g \cdot x)$처럼 $x$ 대신 $x$에 단위근 $g$를 곱한 것을 대입하여 표현합니다. Root of unity 도메인을 이해하셨다면 눈치채셨겠지만 여기서 $g$는 다음 단계를 의미합니다.
 
 - **Mixing Constraint Polynomials**: <br />
 모든 constraint 다항식 $C_k(x)$들을 하나의 혼합 다항식 $C_{mix}(x)$으로 합칩니다.
@@ -152,17 +148,17 @@ C_{mix}(x) = \sum_{k}{\alpha^k} \cdot C_k(x)
 $$
 
 ### Validity Polynomial: $V(x) = C_{mix}(x)/Z(x)$
-$C_{mix}(x)$는 계산이 올바르게 수행되었는지를 하나의 다항식으로 압축해 표현하지만, 이를 효과적으로 검증하려면 특정 지점들에서 이 다항식이 0이 되는지를 확인해야 합니다. 이때 기준이 되는 것이 바로 Zeros Polynomial Z(x)입니다.
+$C_{mix}(x)$는 계산이 올바르게 수행되었는지를 하나의 다항식으로 압축해 표현하지만, 이를 효과적으로 검증하려면 특정 지점들에서 이 다항식이 0이 되는지를 확인해야 합니다. 이때 기준이 되는 것이 바로 Zero Polynomial $Z(x)$입니다.
 
-이 다항식 Z(x)는 execution trace에서 실제 계산이 이루어진 모든 시점(padding 이전의 rows, 예시에서는 clock cycle 0,1,2,3에 해당하는 4개의 특정 x 값들)을 근으로 가집니다. 따라서 이 Z(x)는 해당 지점들에서 값이 0이 됩니다. 예를 들어, 그 4개의 x값이 $z_0,z_1,z_2,z_3$라면 $Z(x) = (x-z_0)(x-z_1)(x-z_2)(x-z_3)$가 됩니다.
+이 다항식 $Z(x)$는 execution trace에서 실제 계산이 이루어진 모든 시점(padding 이전의 rows, 예시에서는 clock cycle 0,1,2,3에 해당하는 4개의 특정 $x$ 값들)을 근으로 가집니다. 따라서 이 $Z(x)$는 해당 지점들에서 값이 0이 됩니다. 예를 들어, 그 4개의 $x$값이 $z_0,z_1,z_2,z_3$라면 $Z(x) = (x-z_0)(x-z_1)(x-z_2)(x-z_3)$가 됩니다.
 
-증명자는 이 $Z(x)$로 $C_{mix}(x)$를 나누어 새로운 다항식 $V(x)={C_{mix}(x)}/{Z(x)}$를 정의합니다. 만약 계산이 정확히 수행되었다면, $C_{mix}(x)$ 는 Z(x)의 모든 근에서 0이므로, Z(x)로 정확히 나누어 떨어지며 V(x)는 온전한 다항식이 됩니다. 하지만 규칙이 어겨진 경우, $C_{mix}(x)$는 Z(x)의 근들 중 적어도 한 지점에서 0이 아니므로, 나눗셈에서 나머지가 발생하거나 정의되지 않는 지점이 생깁니다. 이는 V(x)가 다항식이 아님을 의미하며, 검증 과정에서 쉽게 탐지됩니다.
+증명자는 이 $Z(x)$로 $C_{mix}(x)$를 나누어 새로운 다항식 $V(x)={C_{mix}(x)}/{Z(x)}$를 정의합니다. 만약 계산이 정확히 수행되었다면, $C_{mix}(x)$ 는 $Z(x)$의 모든 근에서 0이므로, $Z(x)$로 정확히 나누어 떨어지며 $V(x)$는 온전한 다항식이 됩니다. 하지만 규칙이 어겨진 경우, $C_{mix}(x)$는 $Z(x)$의 근들 중 적어도 한 지점에서 0이 아니므로, 나눗셈에서 나머지가 발생하거나 정의되지 않는 지점이 생깁니다. 이는 $V(x)$가 다항식이 아님을 의미하며, 검증 과정에서 쉽게 탐지됩니다.
 
-마지막으로 증명자는 이 V(x)도 Merkle Tree를 통해 Commit하고, 평가 도메인에 shift를 적용해 Zero-Knowledge 속성 또한 유지합니다.
+마지막으로 증명자는 이 $V(x)$도 Merkle Tree를 통해 Commit하고, 평가 도메인에 shift를 적용해 Zero-Knowledge 속성 또한 유지합니다.
 
 이제 전체 증명은 두 가지 핵심적인 주장을 보이는 것으로 압축됩니다:
 1. $C(x)$에 $Z(x)$를 곱하면 정말 $C_{mix}(x)$가 되는가? $(V(x) \cdot Z(x) = C_{mix}(x))$
-2. $V(x)$ 및 trace 다항식들이 저차수 다항식인가?($degree \leq 7$)
+2. $V(x)$ 및 trace 다항식들이 저차수 다항식인가? $(degree \leq 7)$
 
 이 두 주장이 증명이 되면, Execution Trace가 모든 제약조건을 만족한다는 것이 수학적으로 보장됩니다. 이때 DEEP-ALI가 첫 번째 주장을, FRI가 두 번째 주장을 검증하는 데 사용됩니다.
 
@@ -171,10 +167,10 @@ $C_{mix}(x)$는 계산이 올바르게 수행되었는지를 하나의 다항식
 ### DEEP-ALI: "$V(x) \cdot Z(x) = C_{mix}(x)$가 성립한다"는 증명
 DEEP(Domain Extending for Eliminating Pretenders)-ALI(Algebraic Linking IOP)는 다항식 관계 $V(x)\cdot Z(x) = C_{mix}(x)$를 검증하는 프로토콜입니다.
 
-가장 단순한 검증 방법은 검증자가 여러 개의 x 값을 선택하고, 각 지점에서 $V(x)\cdot Z(x) = C_{mix}(x)$가 성립하는지 확인하면 됩니다. 하지만 이미 commit된 domain 내에서만 검증하면 악의적인 증명자가 해당 지점들에서만 올바른 값을 가지도록 조작할 수 있다는 한계점이 존재합니다.
+가장 단순한 검증 방법은 검증자가 여러 개의 $x$ 값을 선택하고, 각 지점에서 $V(x)\cdot Z(x) = C_{mix}(x)$가 성립하는지 확인하면 됩니다. 하지만 이미 commit된 domain 내에서만 검증하면 악의적인 증명자가 해당 지점들에서만 올바른 값을 가지도록 조작할 수 있다는 한계점이 존재합니다.
 
-DEEP-ALI는 이를 개선하는 방법입니다. 핵심 아이디어는 Commitment domain 밖의 점에서 검증하는 것입니다(out-of-domain 검증). 검증자는 이전에 생성된 모든 Merkle root들을 해시하여 의사난수를 생성하고, 이를 통해 commitment domain 밖의 랜덤한 점 z를 선택합니다.
-만약 다항식이 올바르지 않다면 이 점에서 발견할 수 있습니다. 이 예시에서는 z = 93을 사용합니다.
+DEEP-ALI는 이를 개선하는 방법입니다. 핵심 아이디어는 Commitment domain 밖의 점에서 검증하는 것입니다(out-of-domain 검증). 검증자는 이전에 생성된 모든 Merkle root들을 해시하여 의사난수를 생성하고, 이를 통해 commitment domain 밖의 랜덤한 점 $z$를 선택합니다.
+만약 다항식이 올바르지 않다면 이 점에서 발견할 수 있습니다. 이 예시에서는 $z = 93$을 사용합니다.
 
 검증자가 $C_{mix}(93)$을 독립적으로 계산할 수 있도록 증명자는 필요한 정보들을 제공해야 합니다:
 $V(93), d_1(93), d_2(93), d_3(93), c_1(93), c_2(93), c_3(93), d_2(93 \cdot 5^{-12}), d_3(93 \cdot 5^{-12})$
@@ -211,13 +207,14 @@ DEEP 기법이 없다면, 증명자는 모든 원래 trace 다항식들 $(d_1, d
 저차수 다항식인지 증명하기위해 FRI(Fast Reed-Solomon Interactive Oracle Proof of Proximity)를 사용합니다.
 
 ![FRI Protocol](./img/fri.png)
+*출처: [Medium](https://medium.com/truezk/fri-commitment-scheme-afca71739fab)*
 
 #### Mixing for FRI
 7개의 DEEP 다항식 $(d'_1,d'_2,d'_3,c'_1,c'_2,c'_3,V')$을 모두 개별적으로 검증하는 것은 비효율적입니다. $C_{mix}(x)$을 구성할때처럼 여러개의 다항식을 검증자가 제공하는 랜덤값 $\alpha_2$을 사용하여 하나의 다항식으로 혼합합니다:
 $$
 f_0(x) = \alpha_2^0 \cdot d'_1(x) + \alpha_2^1 \cdot d'_2(x) + ... + \alpha_2^6 \cdot V'(x)
 $$
-만약 모든 DEEP 다항식이 저차수라면 이들의 선형 결합인 f_0(x)도 저차수를 유지합니다. 실제 예시에서 다음과 같은 $f_0(x)$를 구할 수 있습니다.
+만약 모든 DEEP 다항식이 저차수라면 이들의 선형 결합인 $f_0(x)$도 저차수를 유지합니다. 실제 예시에서 다음과 같은 $f_0(x)$를 구할 수 있습니다.
 $$
 f_0(x) = 19 + 56x + 34x^2 + 48x^3 + 43x^4 + 37x^5 + 10x^6 + 0x^7
 $$
