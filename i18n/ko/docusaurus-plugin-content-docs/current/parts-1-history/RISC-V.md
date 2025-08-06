@@ -53,12 +53,12 @@ RISC-V는 오픈소스 범용 하드웨어 ISA로, 일반 CPU구조에 가까운
 
 :::note[**What is EOF(EVM Object Format)?**]
 
-[EOF(EVM Object Format)](/docs/miscellaneous/EOF.md)
+[EOF(EVM Object Format)](/ko/docs/miscellaneous/EOF)
 
 :::
 
 :::note[**What is WASM(WebAssembly)?**]
 
-[WASM(WebAssembly)](/docs/miscellaneous/WASM.md)
+[WASM(WebAssembly)](/ko/docs/miscellaneous/WASM)
 
 :::

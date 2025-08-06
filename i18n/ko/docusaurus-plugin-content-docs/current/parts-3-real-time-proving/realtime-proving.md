@@ -58,8 +58,8 @@ Gigagas는 롤업 및 실행 클라이언트의 성능을 평가하는데 중요
 
 ## RTP Projects
 
-* [SP1](/docs/parts-3-real-time-proving/sp1.md)
-* [RISC Zero](/docs/parts-3-real-time-proving/Risc-zero.md)
-* [Snarkify](/docs/parts-3-real-time-proving/Snarkify.md)
-* [ZisK](/docs/miscellaneous/ZisK.md)
-* [ZKsync](/docs/miscellaneous/zkSync.md)
+* [SP1](/ko/docs/parts-3-real-time-proving/sp1)
+* [RISC Zero](/ko/docs/parts-3-real-time-proving/Risc-zero)
+* [Snarkify](/ko/docs/parts-3-real-time-proving/Snarkify)
+* [ZisK](/ko/docs/miscellaneous/ZisK)
+* [ZKsync](/ko/docs/miscellaneous/zkSync)
