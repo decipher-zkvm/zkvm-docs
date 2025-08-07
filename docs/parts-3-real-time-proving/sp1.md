@@ -1,10 +1,10 @@
 # SP1
 
-## SP1 Hypercube
-
 * X: [https://x.com/SuccinctLabs/status/1924845712921264562](https://x.com/SuccinctLabs/status/1924845712921264562)
 
 * blog: [https://blog.succinct.xyz/sp1-hypercube/](https://blog.succinct.xyz/sp1-hypercube/)
+
+## SP1 Hypercube
 
 SP1 Hypercube provides real-time proving for Ethereum and is built on a completely new proof system designed based on **Multilinear Polynomials**. It delivers cutting-edge results with latency and cost improvements of up to 5 times compared to SP1 Turbo, proving over 93% of Ethereum blocks within 12 seconds.
 
