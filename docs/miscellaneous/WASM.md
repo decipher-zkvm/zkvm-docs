@@ -1,36 +1,36 @@
 # WASM(WebAssembly)
 
-[WASM](https://webassembly.org/)은 Stack 기반 VM을 위한 바이너리 명령어 형식입니다. 이는 프로그래밍 언어들을 위해 다양한 운영체제나 브라우저에서 별도의 수정 없이도 잘 작동하도록 설계되었으며, 웹 환경에서 클라이언트와 서버 애플리케이션을 배포할 수 있도록 해줍니다. 
+[WASM](https://webassembly.org/) is a binary instruction format for a stack-based virtual machine. It is designed to work well across various operating systems and browsers without modification, enabling deployment of client and server applications in web environments.
 
-- **Efficient and fast:** 바이너리 형식으로 인코딩되도록 설계되어 로딩 및 실행 속도가 빠르며, 다양한 하드웨어에서 네이티브 수준의 성능을 발휘할 수 있도록 하는 것을 목표로 합니다.
+- **Efficient and fast:** It is designed to be encoded in a binary format to enable fast loading and execution, aiming to deliver native-level performance across diverse hardware platforms.
 
-- **Safe**: WASM은 메모리 안정성과 샌드박스 환경에서의 실행을 보장합니다. 기존의 JavaScript 가상 머신 내부에 WASM을 구현할 수도 있습니다.
+- **Safe**: WASM guarantees memory safety and execution within a sandboxed environment. It can also be implemented inside existing JavaScript virtual machines.
 
-- **Open and debuggable:** WASM은 디버깅, 테스트, 실험, 최적화, 학습, 교육 및 수기 프로그래밍 등을 위해 사람이 읽을 수 있는 텍스트 형식으로 변환(pretty-print)될 수 있도록 설계되었습니다.
+- **Open and debuggable:** WASM is designed to be pretty-printed into a human-readable textual format to support debugging, testing, experimentation, optimization, learning, teaching, and manual programming.
 
-- **Part of the open web platform:** WASM 모듈은 JavaScript 환경과 상호 운용이 가능하며, 브라우저에서 사용하는 Web API에 접근할 수 있습니다. 또한 WASM는 웹 외의 환경에서도 사용할 수 있는 임베딩을 지원합니다.
+- **Part of the open web platform:** WASM modules can interoperate with the JavaScript environment and access Web APIs used by browsers. Additionally, WASM supports embeddings beyond the web environment.
 
 ![WASM Compilation Process](./img/wasm1.png)
 
-과정: C/C++ 프로그래밍 언어로 작성한 프로그램 → WASM으로 변환 → JavaScript엔진을 통해 브라우저에서 실행 가능
+Process: A program written in C/C++ is converted to WASM and can be executed in the browser through a JavaScript engine.
 
-하지만, WASM은 스택 기반 머신 구조로 인해 증명 회로에서 연산 처리에 필요한 제약식이 많아지고, 이는 레지스터 기반 구조보다 ZK 회로의 복잡성을 증가시킵니다. 또한, 명령어 수가 많아 zk-SNARK 등에서 모든 명령어의 안전한 실행을 검증해야 하므로 회로 설계와 검증 난이도가 높아집니다. 특히 부동소수점 연산의 경우 ZK에서 효율적으로 처리하기 어렵거나 별도 처리가 필요해 ZK 친화성이 낮다는 단점이 있습니다.
+However, because WASM uses a stack-based machine architecture, the number of constraints required to handle operations in the proof circuit increases, thereby raising the complexity of ZK circuits compared to register-based architectures. Additionally, since there are many instructions, secure execution of all instructions must be verified in zk-SNARKs and similar systems, making circuit design and verification more challenging. In particular, floating-point operations are difficult to handle efficiently in zero-knowledge proofs or require separate treatment, resulting in low ZK-friendliness.
 
-## eWASM( Ethereum-flavored WebAssembly)
+## eWASM(Ethereum WebAssembly)
 
-eWASM은 EVM을 대체하기 위해 설계된 Ethereum 전용 WebAssembly 실행 환경으로, 기존 WASM을 그대로 사용하는 것이 아니라 스마트 컨트랙트 실행에 필요한 제약과 확장을 추가한 특수한 프로파일입니다. 2017년 Devcon3에서 Ethereum 2.0 Phase 2 로드맵에 포함되었으며, 최근에는 zkWASM 프로젝트들에서도 활용되고 있습니다.
+eWASM is an Ethereum-specific WebAssembly execution environment designed to replace the EVM. Rather than using standard WASM as-is, it is a specialized profile that adds constraints and extensions necessary for smart contract execution. It was included in the Ethereum 2.0 Phase 2 roadmap at Devcon3 in 2017 and is recently being utilized in zkWASM projects as well.
 
-eWASM은 기존 EVM보다 빠른 실행 속도를 기대할 수 있으며, 개발자가 Rust, C++ 등 기존 언어로 스마트 컨트랙트를 작성하고 WASM으로 컴파일할 수 있게 해줍니다. 또한 다양한 언어로 만들어진 기존 라이브러리를 재사용할 수 있고, WASM 기반이기 때문에 활발한 글로벌 커뮤니티의 지원을 받을 수 있다는 장점이 있습니다.
+eWASM promises faster execution speeds compared to the existing EVM and allows developers to write smart contracts in familiar languages such as Rust and C++ and compile them to WASM. It also enables reuse of existing libraries built in various languages and benefits from the active global community supporting the WASM ecosystem.
 
-하지만, eWASM이 이더리움 L1에서 채택되지 않은 이유는, 네트워크 전체를 바꿔야 하는 높은 복잡성과 생태계 전환 비용, 기존 EVM 대비 실질적인 성능 향상이나 이점이 확실하지 않았던 점, 그리고 개발 도구와 인프라를 모두 새로 구축해야 하는 부담 등이 복합적으로 작용했기 때문입니다. 또한, 이더리움은 더 시급한 확장성·보안성 과제에 집중하면서 eWASM 도입의 우선순위가 밀렸고, 기존 EVM의 안정성과 신뢰성이 이미 충분히 검증된 점도 중요한 이유가 되었습니다.
+However, eWASM was not adopted on Ethereum L1 due to the high complexity and ecosystem transition costs involved in replacing the entire network, the uncertain and limited actual performance improvements or advantages over the existing EVM, and the burden of having to rebuild all development tools and infrastructure from scratch. Furthermore, Ethereum prioritized more urgent scalability and security challenges, pushing eWASM adoption lower on the agenda, and the stability and trustworthiness of the existing EVM, which have already been well-proven, was also a significant factor.
 
 ## ZK-WASM
 
-ZK-WASM은 Rust로 작성된 프로그램을 WebAssembly(WASM)로 컴파일한 뒤, 이를 영지식증명(ZKP) 시스템과 결합하여 실행 결과에 대한 zk-SNARK 증명을 생성하는 가상 머신입니다. JavaScript 브릿지를 통해 HTML 환경에서도 상호작용이 가능하며, 기존 프로그램을 별도로 수정하지 않고도 zk-SNARK 기반의 신뢰 가능한 계산을 수행할 수 있도록 설계되었습니다. 전통적으로 ZKP를 적용하려면 산술 회로 기반 언어나 특수 프레임워크(Pinocchio, TinyRAM, ZoKrates 등)를 활용해야 했지만, ZK-WASM은 이러한 장벽을 넘어서 바이트코드 수준에서 WASM 전체를 zk-SNARK 회로로 재현함으로써 기존 WASM 애플리케이션을 그대로 실행할 수 있습니다. 이를 통해 클라우드 서비스 제공자는 계산 결과의 정당성과 사용자 프라이버시 보호를 동시에 보장할 수 있는 환경을 제공할 수 있습니다.
+ZK-WASM is a virtual machine that compiles programs written in Rust into WebAssembly (WASM) and then combines this with a ZKP system to generate zk-SNARK proofs for the execution results. It enables interaction within HTML environments via a JavaScript bridge and is designed to perform zk-SNARK–based trustworthy computations without requiring modifications to existing programs. Traditionally, applying ZKP required using arithmetic circuit–based languages or specialized frameworks like Pinocchio, TinyRAM, or ZoKrates. However, ZK-WASM overcomes these barriers by reconstructing the entire WASM at the bytecode level into a zk-SNARK circuit, allowing existing WASM applications to run as-is. This enables cloud service providers to offer environments that guarantee both the correctness of computation results and protection of user privacy.
 
 ![ZK-WASM Circuits](./img/wasm2.png)
 *Source: [Delphinus ZK-WASM Documentation](https://zkwasmdoc.gitbook.io/delphinus-zkwasm/c3_circuits)*
 
-일반적으로 zk-SNARK 시스템은 다항식 제약 조건을 갖는 산술 회로로 표현됩니다. 따라서 WASM 가상 머신의 전체 명령형 논리를 체계적으로 추상화하고 제약 조건을 갖는 산술 회로로 다시 작성해야 하며, 이 회로는 zk-SNARK에서 증명을 만들기 위해 사용됩니다. 즉, 회로에서 만든 zk-SNARK 증명이 존재한다면, 이는 "해당 WASM 프로그램이 진짜로 올바르게 실행되었다"는 것을 수학적으로 증명해주는 것입니다.
+Generally, zk-SNARK systems are expressed as arithmetic circuits with polynomial constraints. Therefore, the entire imperative logic of the WASM virtual machine must be systematically abstracted and reimplemented as an arithmetic circuit with constraints, which is then used to generate proofs within zk-SNARK. In other words, if a zk-SNARK proof made from the circuit exists, it mathematically proves that the WASM program was executed correctly.
 
-하지만, zkWASM은 zkEVM이나 RISC-V 기반 zkVM에 비해 증명 생성 속도나 효율성이 떨어질 수 있습니다. 현재 대부분의 zkWASM 구현은 Halo2 등 특정 증명 시스템에 의존하고 있는데, 이는 대규모 클라이언트 환경에서는 충분히 빠르지 않을 수 있습니다. 또한, WASM의 설계상 동적 메모리, 함수 호출 등 복잡한 구조가 zk회로화에 비해 최적화가 덜 되어 있습니다.
+However, compared to zkEVM or RISC-V–based zkVMs, zkWASM may exhibit slower proof generation speed and lower efficiency. Most current zkWASM implementations depend on specific proof systems such as Halo2, which might not be sufficiently fast in large-scale client environments. Additionally, due to WASM’s design involving dynamic memory, function calls, and other complex structures, its zk-circuit transformation is less optimized in comparison.
