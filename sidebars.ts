@@ -37,7 +37,7 @@ const sidebars: SidebarsConfig = {
         'parts-2-risc-v-zkvm/risc-v-zkvm-architecture',
         'parts-2-risc-v-zkvm/optimization',
         'parts-2-risc-v-zkvm/zkvm-landscape',
-        'parts-2-risc-v-zkvm/deep-dive-into-benchmark',
+        // 'parts-2-risc-v-zkvm/deep-dive-into-benchmark',
       ],
     },
     {
@@ -73,7 +73,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'parts-5-use-cases/ibc-eureka',
         'parts-5-use-cases/zkOracle',
-        'parts-5-use-cases/multichain-governance-aggregator',
+        // 'parts-5-use-cases/multichain-governance-aggregator',
       ],
     },
     {

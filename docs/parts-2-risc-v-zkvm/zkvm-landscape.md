@@ -3,9 +3,9 @@
 ![landscape](./img/landscape.png)
 
 
-현재 zkVM 생태계의 주요 프로젝트들을 체계적으로 분류한 다이어그램입니다.
+This is a diagram that systematically classifies the major projects in the current zkVM ecosystem.
 
-프로젝트들은 크게 RISC-V 기반과 non RISC-V로 구분되며, RISC-V 기반 프로젝트는 ***ZK backend**에 따라 세부 분류했습니다. 분류 기준과 프로젝트 정보는 [awesome-zkvm](https://github.com/rkdud007/awesome-zkvm) 리포지토리를 참고했습니다.
+Projects are broadly divided into RISC-V based and non-RISC-V categories, with RISC-V based projects further classified according to their ***ZK backend**. The classification criteria and project information were referenced from the [awesome-zkvm](https://github.com/rkdud007/awesome-zkvm) repository.
 
 :::note
 **ZK Backends**<br />
@@ -13,7 +13,7 @@ The proof system, typically in the form of a (Polynomial) Interactive Oracle Pro
 :::
 
 :::caution
-- 정보 수정이나 추가 제안은 GitHub 이슈로 제보해 주세요.
+- For information corrections or additions, please submit a GitHub issue.
 :::
 
 

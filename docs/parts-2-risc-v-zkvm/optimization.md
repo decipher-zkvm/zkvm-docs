@@ -1,66 +1,66 @@
 # Optimization
 
-현존하는 zkVM들도 이미 복잡하고 성숙한 코드베이스를 갖추고 있으며, 그 규모가 수백만 라인에 달합니다. 프로토콜 설계 단계뿐 아니라 기반이 되는 암호학적 연구부터 코드 구현에 이르기까지 모든 레이어에서 다양한 방식의 최적화가 이루어지고 있습니다. 하지만 zkVM 발전 과정에서 획기적이고 실질적인 변화를 가져온 굵직한 최적화 아이디어들은 다음과 같이 정리할 수 있습니다.
+Existing zkVMs already have complex and mature codebases spanning millions of lines. Various optimization approaches are being implemented across all layers, from underlying cryptographic research and protocol design to code implementation. However, the major optimization ideas that have brought significant and practical changes in zkVM development can be summarized as follows.
 
 ## Continuation
 
-zkVM은 주어진 프로그램의 실행에 대한 증명을 만듭니다. 이를 위해 Prover가 프로그램에 주어진 input을 넣어 실행해본 뒤, 실제로 프로그램에서 어떤 instruction들이 어떤 값들을 가지고 어떤 순서로 실행되었는지를 알아야 합니다. 이렇게 프로그램의 실행 내역을 instruction들의 리스트로 정리한 내용을 실행 trace라고 부르며, zkVM이 만드는 증명은 이 trace의 한 줄 한 줄이 정의된 프로그램 실행 규칙을 따르는지 여부입니다.
+zkVM creates proofs for the execution of a given program. To do this, the Prover must execute the program with given inputs to understand which instructions were executed, with what values, and in what order. This execution history, organized as a list of instructions, is called an execution trace, and the proof created by zkVM verifies whether each line of this trace follows the defined program execution rules.
 
-우리가 증명하려는 프로그램의 실행 흐름은 ‘순차적’이기 때문에 증명 생성도 순차적으로 진행됩니다. 즉 실행 trace가 I₁, I₂, I₃, … 순으로 진행된다고 할 때, ZK 프로토콜 내부적으로는 I₁에 대한 처리를 마친 다음에야 I₂에 대한 증명으로 넘어갈 수 있습니다. 이 말은 병렬화가 어렵다는 점이고, 현대 대규모 연산을 위한 서버들이 매우 강력한 병렬 연산 기능을 갖추고 있다는 점을 고려할 때 큰 손해입니다.
+Since the execution flow of the program we want to prove is 'sequential', proof generation also proceeds sequentially. That is, when the execution trace proceeds in the order I₁, I₂, I₃, ..., the ZK protocol internally can only move on to proving I₂ after completing the processing for I₁. This means parallelization is difficult, which is a significant disadvantage considering that modern large-scale computation servers have very powerful parallel computing capabilities.
 
-이렇게 병렬화의 어려움으로 인한 병목을 최소화하기 위한 방식이 Continuation으로, RISC Zero가 처음 선보이며 선도한 기술입니다. 증명 대상인 trace를 여러 개의 segment로 쪼갠 뒤, 여러 머신이 독립적으로 각 segment에 대한 증명을 생성합니다. 또 각 segment들이 올바르게 이어붙여졌다는 점도 증명해야 하므로 트리 구조로 각 segment를 병합해 최종 하나의 root 증명으로 압축합니다. 이진 트리의 깊이가 O(log n)이므로, 각 aggregation도 병렬적으로 수행 가능해 병합 오버헤드가 크지 않습니다.
+Continuation is a method to minimize bottlenecks due to parallelization difficulties, a technology first introduced and pioneered by RISC Zero. The trace to be proven is split into multiple segments, and multiple machines independently generate proofs for each segment. Since it must also be proven that each segment is correctly connected, the segments are merged in a tree structure and compressed into a single final root proof. Since the depth of a binary tree is O(log n), each aggregation can also be performed in parallel, so the merging overhead is not significant.
 
 ![Continuation from RISC-Zero Study Club](./img/continuation.png)
 
-원래는 하나의 머신만 가지고 큰 실행 trace의 증명을 처음부터 끝까지 생성해야 했던 반면, 작업을 서로 의존적이지 않은 여러 조각으로 분할해 다수의 독립 머신에 병렬로 분배할 수 있게 되었습니다. 즉 단순히 더 빠른 CPU와 더 큰 메모리를 이용해서만 확장할 수 있었던 이전 디자인과 달리 수평 확장이 가능해졌다는 의미입니다. 또한 memory peak 문제로 인해 무제한으로 큰 프로그램을 한 번에 증명할 수 없다는 이전의 한계도, trace를 임의의 숫자로 쪼개 각 머신에 증명할 수 있게 되면서 해결되었습니다.
+While originally a single machine had to generate proof for a large execution trace from start to finish, the work can now be divided into multiple non-dependent pieces and distributed in parallel to multiple independent machines. This means horizontal scaling is now possible, unlike the previous design where expansion was only possible through faster CPUs and larger memory. Additionally, the previous limitation of being unable to prove arbitrarily large programs at once due to memory peak issues has been resolved, as traces can now be split into any number of pieces and proven on each machine.
 
 ## Recursion
 
-일반적으로 ZK 생성 프로토콜은 그 특성에 따라 STARK와 SNARK로 분류됩니다. 현재는 서로의 특성을 공유하는 다양한 프로토콜이 설계되어 명확한 분류가 모호해졌지만, 핵심적으로 증명 생성 기술은 다음 두 가지 트레이드오프를 기준으로 분류할 수 있습니다: Prover cost와 Verifier cost(및 증명 크기).
+Generally, ZK proof generation protocols are classified into STARK and SNARK based on their characteristics. Although various protocols that share each other's characteristics have been designed, making clear classification ambiguous, proof generation techniques can fundamentally be classified based on two trade-offs: Prover cost and Verifier cost (and proof size).
 
-STARK 기반 증명은 대량의 실행 trace에 대해서도 Prover 비용이 저렴하지만 Proof 크기가 크고 Verifier 비용이 높습니다. 특히 on-chain 환경에서 STARK 증명(receipt)을 검증하는 것은 비용이 매우 커서 비현실적입니다.
+STARK-based proofs have low Prover costs even for large execution traces, but have large proof sizes and high Verifier costs. Particularly, verifying STARK proofs (receipts) in an on-chain environment is very expensive and impractical.
 
-반대로 SNARK 기반 증명은 Proof 크기가 훨씬 작고, 대개 증명 크기가 증명 대상의 크기와 무관하게 O(1)이거나 아주 적게만 의존한다는 특징이 있습니다. 대신 Prover cost가 커서 긴 실행 trace에 대한 증명을 생성하는 데 어려움이 있습니다.
+Conversely, SNARK-based proofs have much smaller proof sizes, typically O(1) regardless of the size of the proof target or with very little dependency. However, the Prover cost is high, making it difficult to generate proofs for long execution traces.
 
-이를 해결하기 위해서 STARK 증명에 대한 STARK Verifier 연산 자체를 ZK 증명을 만들 수 있는 circuit으로 나타내고, 해당 circuit에 대해 SNARK proof를 생성합니다. 이렇게 ZK proof를 검증하는 과정을 또 다른 ZK circuit 내에서 수행하게 하는 것을 Recursion이라 부르며, 최종적으로 STARK의 대규모 실행 증명을 매우 작은 SNARK proof로 요약할 수 있게 됩니다. 대부분의 zkVM이 실행 trace 자체는 STARK 방식으로 증명하되, 이 증명을 직접 제출하는 대신 그 증명을 검증하는 로직을 또 다른 SNARK proof로 만들어 제출합니다. 이렇게 재귀적인 증명 방식을 Proof Composition이라 부르기도 합니다.
+To solve this, the STARK Verifier computation for STARK proofs is represented as a circuit that can create ZK proofs, and SNARK proofs are generated for that circuit. This process of performing ZK proof verification within another ZK circuit is called Recursion, and ultimately allows large-scale STARK execution proofs to be summarized into very small SNARK proofs. Most zkVMs prove the execution trace itself using STARK methods, but instead of directly submitting this proof, they create the logic for verifying that proof as another SNARK proof and submit that. This recursive proof method is also called Proof Composition.
 
 ![Recursive proof](./img/recursion.png)
 
-RISC Zero의 Proof Composition 구현은 다음과 같습니다.
+RISC Zero's Proof Composition implementation is as follows:
 
-| Receipt 종류            | 설명                                                         |
-|-------------------------|--------------------------------------------------------------|
-| **Composite Receipt**   | 각 segment(STARK proof)들을 벡터로 모아둔 증명 세트           |
-| **Succinct Receipt**    | Composite Receipt를 **Recursion Circuit**으로 병합한 단일 STARK |
-| **Groth16 Receipt**     | Succinct Receipt를 **Groth16 Circuit**으로 최종 압축한 작은 Proof |
+| Receipt Type            | Description                                                         |
+|-------------------------|---------------------------------------------------------------------|
+| **Composite Receipt**   | A proof set collecting each segment (STARK proof) as a vector      |
+| **Succinct Receipt**    | A single STARK merging Composite Receipt through **Recursion Circuit** |
+| **Groth16 Receipt**     | A small proof finally compressing Succinct Receipt through **Groth16 Circuit** |
 
-여러 개의 STARK proof를 재귀적으로 압축해 하나의 STARK로 합친 다음, 그 결과를 Groth16이라는 SNARK로 다시 증명해 최종 증명 크기를 수 KB 단위로 축소할 수 있습니다.
+Multiple STARK proofs can be recursively compressed and merged into one STARK, then the result is proven again with a SNARK called Groth16 to reduce the final proof size to kilobytes.
 
 ## Precompile
 
-원래 Precompile이라는 용어는 EVM에서 사용되며, EVM 바이트코드로 구현하기 복잡하고 비용이 큰 연산(예: SHA-2, 타원곡선 pairing 등)을 네이티브 코드로 처리해 실행 비용을 절감하는 장치입니다.
+The term Precompile originally comes from EVM, where it refers to a mechanism that reduces execution costs by processing complex and expensive operations (e.g., SHA-2, elliptic curve pairing) in native code rather than implementing them in EVM bytecode.
 
-zkVM 디자인에서 Precompile도 이와 유사한 의의를 갖습니다. 반복적으로 자주 수행되는 연산을 일반 RISC-V 코드로 표현해 전체 프로그램 내에서 증명하는 대신, 별도의 특수 목적 SNARK/STARK 회로로 묶어 연산 결과를 증명에 포함시킵니다. 이렇게 특정 연산에 특화된 회로는 고도의 최적화를 거쳤기에, 임의의 RISC-V 코드를 증명할 수 있어야 하는 기존 방식의 높은 표현성을 일부 포기한 만큼 비용을 크게 낮출 수 있습니다. EVM Precompile처럼 암호학적 해시 연산이나 타원곡선 연산 등을 각 zkVM 구현별로 지원합니다. 가령 SHA-256 해시 연산은 표현에 수천 개의 RISC-V 명령이 필요하지만, Precompile을 이용하면 훨씬 적은 제약, 즉 더 작은 차수의 다항식으로 증명할 수 있습니다.
+Precompile in zkVM design has a similar significance. Instead of expressing frequently performed operations as general RISC-V code and proving them within the entire program, they are bundled into separate special-purpose SNARK/STARK circuits and the operation results are included in the proof. These circuits specialized for specific operations have undergone extensive optimization, so they can significantly reduce costs by partially sacrificing the high expressiveness of the existing method that must be able to prove arbitrary RISC-V code. Like EVM Precompile, each zkVM implementation supports cryptographic hash operations, elliptic curve operations, etc. For instance, SHA-256 hash operations require thousands of RISC-V instructions to express, but using Precompile can prove them with much fewer constraints, i.e., polynomials of lower degree.
 
-아래는 Succinct에서 공개한 SP1 Precompile을 이용한 SNARK Verifier 라이브러리가, Precompile을 사용하지 않은 구현에 비해 얼마나 큰 성능 향상을 달성했는지 보여주는 벤치마크입니다.
+Below is a benchmark showing how much performance improvement the SP1 Precompile-based SNARK Verifier library published by Succinct achieved compared to implementations without Precompile.
 
 ![sp1-snark-verifier benchmark](./img/sp1_precompile.png)
 
-이와 유사하게, 이더리움 EIP-4844 blob을 위한 KZG 검증이나 이더리움 합의에서 사용되는 BLS12-381 서명 검증 등의 연산도 타원곡선 연산 Precompile을 활용해 성능을 크게 개선할 수 있습니다. 이처럼 특정 반복 연산을 Precompile로 처리함으로써 많은 비용을 절약할 수 있습니다.
+Similarly, operations such as KZG verification for Ethereum EIP-4844 blobs or BLS12-381 signature verification used in Ethereum consensus can significantly improve performance using elliptic curve operation Precompile. By processing specific repetitive operations with Precompile, significant costs can be saved.
 
 ## Lookup Argument
 
-Lookup Argument를 핵심으로 구현한 zkVM도 있습니다. Jolt가 대표적인 예시입니다.
+Some zkVMs are implemented with Lookup Argument at their core. Jolt is a representative example.
 
-ZK 솔루션이 마주치는 문제 중 하나는 현실 컴퓨터에서 흔히 쓰이는 연산(예: bitwise, 나눗셈, modular arithmetic, 비교 연산 등)을 circuit으로 나타내기가 매우 어렵다는 점입니다. 일반 컴퓨터에서는 이런 연산이 아주 작은 단위의 간단한 연산인 것처럼 처리되지만, circuit에서는 이를 표현하기 위해 수많은 게이트가 필요합니다.
+One problem that ZK solutions face is that operations commonly used in real computers (e.g., bitwise, division, modular arithmetic, comparison operations) are very difficult to represent as circuits. While these operations are processed as simple small-unit operations in regular computers, circuits require numerous gates to express them.
 
-이럴 때 circuit 내에서 직접 연산하는 대신, 사전에 해당 연산의 evaluation table을 만들어두고, instruction의 입력·출력 값이 이 table에 있음을 증명하는 방식이 더 저렴합니다. 이를 가능하게 하는 모듈이 Lookup Argument입니다. 또한 값이 특정 범위 안에 있음을 증명하거나, 메모리에서 읽기/쓰기 연산의 올바름을 증명할 때에도 Lookup Argument를 사용하면 훨씬 간단하게 처리할 수 있습니다.
+In such cases, instead of computing directly within the circuit, it's cheaper to create an evaluation table for the operation in advance and prove that the input/output values of the instruction are in this table. The module that enables this is Lookup Argument. Additionally, Lookup Argument can be used to prove that values are within specific ranges or to prove the correctness of read/write operations in memory, making processing much simpler.
 
 ![Lookup argument](./img/lookup.png)
 
 ## Hardware Acceleration
 
-최근 가장 주목받는 접근 방식은 하드웨어 가속화입니다. 단순히 GPU를 많이 사용하는 것만으로는 ZK 증명에서 핵심 연산(예: MSM, FFT, 해시 등)을 충분히 병렬화·가속화하기 어렵기 때문에, FPGA나 ASIC을 활용한 하드웨어-소프트웨어 Co-design이 대두되고 있습니다. 이더리움 Real-time proving을 목표로 많은 플레이어가 이 분야에서 두각을 나타내며 성과를 인정받고 있습니다. 비트코인 채굴처럼, 향후에는 zkVM 증명 생성에 특화된 하드웨어를 제작하는 팀들이 네트워크의 큰 비중을 차지할 것으로 전망됩니다.
+The most notable recent approach is hardware acceleration. Since simply using many GPUs is insufficient to parallelize and accelerate core operations in ZK proofs (e.g., MSM, FFT, hashing), hardware-software co-design using FPGA or ASIC is emerging. Many players are distinguishing themselves and gaining recognition in this field with the goal of Ethereum real-time proving. Like Bitcoin mining, it is expected that teams creating specialized hardware for zkVM proof generation will occupy a large portion of the network in the future.
 
 
-위와 같은 구조적인 최적화 뿐 아니라, 코드 구현 단계에서도 상당히 많은 최적화가 일어납니다. 증명을 만들 때에 반복적으로 실행해야 하는 크기가 큰 연산들의 경우 오랜 시간동안 수학적 연구를 거쳐 최적화되어왔습니다. 구현시에도 소프트웨어 레벨에서 어떻게 최적화하고 병렬화하는지가 전체 퍼포먼스에 큰 영향을 미칩니다. 또 zk에서 연산들은 대부분 흔히 컴퓨터에서 사용하는 machine instruction과 1대1로 대응되지 않고 적절한 변환을 거쳐야 하는데, 여기에서도 다양한 종류의 수학적인 트릭들이 사용됩니다. 이런 수학적 연산들을 zk 영역의 특징과 요구사항에 맞춰 잘 최적화시켜야 대규모 연산을 수행하는 proof 생성자들을 운영할 때 비용을 낮출 수 있으며, 많은 팀들이 이를 위해 각자 다양한 방식으로 노력하고 있습니다.
+In addition to such structural optimizations, significant optimization also occurs at the code implementation stage. Large-scale operations that must be repeatedly executed when creating proofs have been optimized through mathematical research over long periods. During implementation, how to optimize and parallelize at the software level greatly affects overall performance. Moreover, operations in ZK mostly don't correspond one-to-one with commonly used machine instructions in computers and require appropriate transformations, where various mathematical tricks are also used. These mathematical operations must be well-optimized according to the characteristics and requirements of the ZK domain to reduce costs when operating proof generators that perform large-scale computations, and many teams are working on this in various ways.
