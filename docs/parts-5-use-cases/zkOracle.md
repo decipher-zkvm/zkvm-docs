@@ -1,35 +1,40 @@
 # zkOracle
 
-zkVM이 블록체인 생태계에 도입되면서 활용되는 사례 중 하나는 zkOracle입니다. zkOracle은 오라클 데이터의 무결성을 신뢰 최소화 방식으로 보장하기 위한 구조로, 기존의 멀티시그 오라클이나 중앙화된 데이터 집계 방식의 한계를 보완합니다.
+With the introduction of zkVM technology into the blockchain ecosystem, one notable application is the zkOracle. A zkOracle is a framework designed to ensure the integrity of oracle data in a trust-minimized way, addressing the limitations of traditional multisig or centralized data aggregation methods.
 
-그 구체적인 예시로 Lido는 이더리움 스테이킹 유동성 문제를 해결하기 위한 프로토콜로서, 기존에 멀티시그 오라클에 의존하던 스테이킹 정보 집계 과정을 보다 신뢰 최소화(trust-minimized)된 구조로 개선하고자 Succinct Labs의 SP1 zkVM 기반의 zkOracle을 도입했습니다. 이 글에서는 Lido 프로젝트에서 zkVM을 활용하는 구체적인 방식과, 이를 통한 보안성/효율성 개선 효과에 대해 다룹니다.
+A concrete example is Lido, a protocol aimed at solving Ethereum’s staking liquidity problem. Lido has integrated a zkOracle built on Succinct Labs’ SP1 zkVM to improve its staking data aggregation process, which previously relied on a multisig oracle. This transition aims to achieve a more trust-minimized architecture. This section examines how Lido leverages zkVM technology and the resulting improvements in security and efficiency.
 
-## Lido 프로젝트 개요
-Lido는 이더리움 등 PoS 블록체인에서 스테이킹한 자산의 유동성을 확보해주는 탈중앙화 리퀴드 스테이킹 프로토콜입니다. 사용자는 Lido에 ETH 등을 예치하면 스테이킹 보상을 얻는 한편, 예치 증표로서 stETH 같은 토큰을 받아 디파이에서 유동적으로 활용할 수 있습니다. Lido는 이러한 유동성 스테이킹 파생토큰을 통해 예치 자산의 잠금 문제를 해결하고, 더 많은 사용자가 손쉽게 스테이킹에 참여하도록 합니다.
-Lido Oracle 모듈은 이더리움 합의층(Beacon 체인)의 정보를 Lido 스마트 컨트랙트에 전달하는 역할을 하는데, Lido가 선정한 9인 중 5인의 서명(9-out-of-5 multisig system)으로 구성된 서드파티 오라클 위원회에 의존하는 구조입니다. 이는 정기적으로 Lido가 운영 중인 모든 validator의 총 예치 ETH 잔액, 신규/종료 검증인 수 등의 합의층 데이터를 집계하여 Lido의 AccountingOracle 컨트랜트에 제출합니다. 이 정보에 기반하여 Lido는 stETH 공급량 조절 등의 핵심 기능을 수행합니다.
-그러나 현재 구조에서는 데이터의 정확성이 오라클 운영자들에 의존하기 때문에, 악의적 조작이나 오류가 발생할 경우 프로토콜 안전성에 위험이 될 수 있습니다. 이러한 중앙화된 신뢰 지점을 최소화하려는 문제의식에서, Lido 커뮤니티는 신뢰할 수 있는 영지식 증명 기반의 대안을 모색해왔습니다. 그 중 하나가 Succint Labs 팀의 제안으로, SP1 zkVM을 활용한 Lido zkOracle 구축입니다.
+## Overview of the Lido Project
+Lido is a decentralized liquid staking protocol for PoS blockchains such as Ethereum. Users deposit assets like ETH into Lido to earn staking rewards while receiving liquid staking tokens—such as stETH—that can be freely used in DeFi. By issuing these derivative tokens, Lido solves the lock-up problem of staked assets, enabling more users to participate in staking with ease.
 
-## Lido에서의 SP1 zkVM 활용 방식: zkOracle 구현
+The Lido Oracle module is responsible for delivering Ethereum consensus layer (Beacon Chain) data to Lido’s smart contracts. Currently, this module depends on a third-party oracle committee composed of nine members, with data updates approved by a 5-of-9 multisig scheme. At regular intervals, this committee aggregates key consensus data—such as the total staked ETH across all Lido validators, the number of newly activated or exited validators—and submits it to the AccountingOracle contract. This information is critical for core operations such as adjusting the supply of stETH.
+
+However, in this structure, data accuracy depends heavily on the integrity of the oracle operators. Any malicious manipulation or error could compromise protocol safety. To reduce this centralized trust dependency, the Lido community began exploring cryptographic, zero-knowledge proof–based alternatives. One such proposal, from the Succinct Labs team, is the deployment of an SP1 zkVM–based Lido zkOracle.
+
+## How Lido Uses SP1 zkVM: zkOracle Implementation
 ![](img/lido(1).png)
+*Source: [Succinct X](https://x.com/SuccinctLabs/status/1854959099030782159)*
 
-Lido는 SP1을 이용하여 이더리움 합의층 데이터를 검증하는 zkOracle을 구축합니다. Lido zkOracle의 핵심 역할은 이더리움 비콘체인에 있는 Lido 관련 정보를 온체인에서 신뢰 없이 재현 및 확인하는 것입니다. 전체 흐름을 살펴보면 다음과 같습니다:
+Lido uses SP1 to build a zkOracle that verifies Ethereum consensus layer data. The core role of the Lido zkOracle is to recreate and validate Lido-related information from the Ethereum Beacon Chain in a trustless manner on-chain. The overall flow works as follows:
 
-- **입력 데이터 수집**: 오라클 클라이언트는 우선 Beacon Chain 상태 데이터를 불러옵니다. 또한 이전 Accounting Report의 슬롯 번호 인자 또는 컨트랙트 저장값을 확인하여 이전 상태의 누적 staking balance 등 요약 정보도 준비합니다. 이 데이터는 공용 구조체로 포맷되어 SP1 프로그램이 처리할 수 있는 바이너리 입력으로 직렬화됩니다.
-- **SP1 프로그램 실행 및 증명 생성 요청**: 준비된 입력 데이터를 기반으로, Oracle 클라이언트는 Succinct SP1 네트워크에 증명 생성 작업을 요청합니다. 이때 두 가지 실행 모드를 지원하는데, `로컬 모드`에서는 Docker 환경에서 SP1 프로버를 직접 띄워 로컬에서 프로그램을 실행하고 증명을 생성합니다. 그와 달리 `네트워크 모드`에서는 Succinct가 운영하는 분산 Prover 네트워크에 작업을 전송합니다.
-- **실행 결과 및 증명 수령**: SP1 프로그램이 실행되면 결과 데이터가 생성되고, 그 실행의 정합성을 보증하는 ZKP가 함께 만들어집니다. 그러면 Oracle 클라이언트는 SP1 네트워크로부터 출력 데이터와 proof를 받아서, 온체인에 제출할 준비를 합니다.
+- **Data Collection**: The oracle client fetches state data from the Beacon Chain. It also retrieves summary information from the previous accounting report—such as the slot number and cumulative staking balance—from either contract storage or parameters. All of this data is packaged into a public struct and serialized into binary input suitable for the SP1 program.
+- **Program Execution and Proof Request**: Using the prepared input data, the oracle client requests proof generation from the Succinct SP1 network. Two execution modes are available:
+    - Local Mode: Runs the SP1 prover locally in a Docker environment to execute the program and generate the proof.
+    - Network Mode: Sends the job to Succinct’s distributed prover network.
+- **Receiving Output and Proof**: Once the SP1 program executes, it produces both the output data and a ZKP proving the correctness of execution. The oracle client receives these from the SP1 network and prepares them for on-chain submission.
 
-요약하자면, Lido의 SP1 zkOracle은 이더리움 합의층의 Lido 검증인 데이터를 Rust로 작성된 프로그램으로 처리하고, SP1 zkVM으로 해당 프로그램 실행을 증명하여, 온체인 컨트랙트가 그 결과를 신뢰 없이 수용하도록 하는 구조입니다.
+In short, Lido’s SP1 zkOracle processes Ethereum consensus data about Lido’s validators using a Rust-based program, generates a proof of correct execution via SP1 zkVM, and enables the on-chain contract to accept the result without relying on trusted third parties.
 
-Goerli 및 Holesky 테스트넷에서 성공적으로 1백만이 넘는 검증인 규모 데이터의 증명 및 온체인 검증 데모를 수행하였으며, 올해 말 공식 출시될 예정입니다.
+Lido has successfully demonstrated proof generation and on-chain verification for validator datasets exceeding one million entries on the Goerli and Holesky testnets. The official launch is planned for later this year.
 
-## SP1 zkOracle 도입으로 기대되는 효과
-**보안성 강화 및 신뢰 최소화**
-zkOracle의 가장 큰 효과는 프로토콜의 신뢰 구조를 근본적으로 개선하는 데 있습니다. 이전처럼 오라클 서명자들의 정직성에만 의존할 필요가 없고, 이는 곧 오라클 조작이나 오류로 인한 위험을 크게 낮춰줍니다.
+## Expected Benefits of Integrating SP1 zkOracle
+**Enhanced Security and Trust Minimization**: 
+The primary benefit of the zkOracle is its fundamental improvement of the protocol’s trust model. The system no longer relies solely on the honesty of oracle signers, greatly reducing the risk of data manipulation or operator error.
 
-**투명성 향상**
-zk 증명은 누구나 검증할 수 있는 공개된 수학적 증거를 제공합니다. 커뮤니티는 제공된 증명을 직접 검증함으로써 결과의 타당성을 독립적으로 확인할 수 있습니다.
+**Increased Transparency**: 
+A zk proof provides a publicly verifiable mathematical guarantee of correctness. The community can independently validate the provided proof to confirm the integrity of results.
 
-**단계적 도입 및 중복성 확보**
-기존 오라클 시스템을 완전히 교체하는 대신, zkOracle을 병렬적으로 추가하는 방식으로 구현되어 중복성을 강화합니다. 이로써 한 쪽의 구현에 버그나 문제가 생겨도 전체 서비스에 미치는 영향이 제한됩니다.
+**Phased Deployment with Redundancy**: 
+Instead of fully replacing the existing oracle system, zkOracle is introduced in parallel, adding redundancy. This ensures that if one system encounters bugs or failures, the overall service impact remains limited.
 
-위와 같은 SP1 zkOracle 도입은 Lido 프로토콜의 핵심 데이터 흐름에 수학적 증명 기반의 검증 계층을 추가하여, 오라클 리스크를 대폭 줄이고 프로토콜의 장기적인 안정성과 탈중앙화를 개선할 것으로 기대됩니다.
+By integrating the SP1 zkOracle, Lido adds a cryptographic proof–based verification layer to its core data pipeline. This significantly reduces oracle-related risks and is expected to improve the protocol’s long-term stability and decentralization.
